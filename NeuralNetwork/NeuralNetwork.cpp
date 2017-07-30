@@ -14,6 +14,7 @@
 int main()
 {
 	auto start = time(NULL);
+	auto now = time(NULL);
 	std::vector<network_group> network_v;
 	network_v.resize(51);
 	int count = 0;
@@ -49,16 +50,24 @@ int main()
 			network_v[x + (network_v.size() -1) /2].combine_vectors(network_v[x].network, network_v[random(rng)].network);
 		}
 		network_v[network_v.size() - 1].combine_vectors(network_v[0].network, network_v[random(rng)].network);
-
-		if (count % 500 == 0)
+		now = time(NULL);
+		if (abs(difftime(now,start)) > 7200)
+		{
+			for (int x = 1; x < network_v.size(); x++)
+			{
+				save_network(network_v[x - 1].network, count, x);
+			}
+			start = time(NULL);
+		}
+		if (abs(difftime(now, start)) > 60)
 		{
 			std::cout << "generation " << count << '\n';
 			for (int x = 1; x < network_v.size(); x++)
 			{
-				save_network(network_v[x - 1].network, count, x);
 				std::cout << "fitness :" << network_v[x].fittness << '\n';
 			}
 		}
+
 
 		for (int x = 0; x < network_v.size(); x++)
 		{
@@ -66,7 +75,5 @@ int main()
 		}
 		count++;
 	}
-	auto end = time(NULL);
-	std::cout << difftime(end, start) << "seconds passed";
 }
 
