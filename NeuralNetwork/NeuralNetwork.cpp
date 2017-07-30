@@ -50,7 +50,7 @@ int main()
 		}
 		network_v[network_v.size() - 1].combine_vectors(network_v[0].network, network_v[random(rng)].network);
 
-		if (count % 10 == 0)
+		if (count % 500 == 0)
 		{
 			std::cout << "generation " << count << '\n';
 			for (int x = 1; x < network_v.size(); x++)
