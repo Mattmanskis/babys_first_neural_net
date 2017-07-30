@@ -1,0 +1,30 @@
+          O   00O0000O   OOOOOOOOOOOOOO           OOO       
+          O   0 O    O   O     OO O   0           O 0       
+          00000 O    O   O     OO O   0           O 0       
+          0     O    0000000000O00O0000           O 0       
+          0     O      0 O00   OO O    O          O 0       
+          0OOOOO00OOOOO0 O0O   O00O0000OOOOOOO    O 0       
+                0 O 0 000O0OOOOO0 O    O 0        O 0       
+                0OOOOOO0OO0O0  O0000O  OOOOO      O 0       
+                  O   00 00O0 0OO0OOOO OO0 0      O 0       
+                  O   00 00OO00OO0OOOO OO0 0  OOO O 0       
+                  O   00 00OOOOOO0OOOO0OO0 0  O 00O00OOOOOO 
+                  000000O000000O00O0O00OO0O0OOOOOOOOO       
+                  0    0O0O0000O00OOOO OO0O0 O  000         
+                  00OOO0OOO0000000OOOO OO0O0 OOO000OOO      
+                  0 O O0O  0O0O0O0O0OOOOO0O0 00O00   0      
+               OOOOOOOOOOOO0OOO0O0O0OOOOO0O0O OO00   0      
+               O  0 O0O0O O0000000O0OOOOO0O0  OO00OO 0      
+               O  0 O0O00000O000OOOOO0OOOOO0OOOO00OOOO      
+         0000OOO  0 00O00000O000O0O000OO0OO0  OO   0        
+             O    0  0O0O OOO0OOO0O0000O0000  OO   0        
+           00000000000OOOOOOOOOOOOOOOOOO0 O0  0O0000        
+             O    0  000O O  0   0 000OO0 0OOOOOOO          
+             O    0  000OOOOO0OOO0O0OOOO0  O                
+             000000   0 000000O  0 0O OO0  O                
+                      0     00000000OOOO0OOO                
+                           0000000OO00OO0                   
+                        00000000000O0 OO0                   
+                            0000000O0OOO0                   
+                             0 0  0O  OO0                   
+                             0OOOOOOOOOO0                   
