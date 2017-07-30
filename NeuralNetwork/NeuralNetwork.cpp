@@ -64,7 +64,7 @@ int main()
 		{
 			network_v[x].fittness = 0;
 		}
-		
+		count++;
 	}
 	auto end = time(NULL);
 	std::cout << difftime(end, start) << "seconds passed";
