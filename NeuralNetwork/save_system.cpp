@@ -2,6 +2,7 @@
 #include "save_system.h"
 #include <fstream>
 #include <iomanip>
+#include "network.h"
 
 std::string save_network(Network & network, int generation, int number)
 {

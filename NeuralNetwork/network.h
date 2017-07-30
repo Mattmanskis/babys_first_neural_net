@@ -1,6 +1,8 @@
 #pragma once
 #include "definitions.h"
 #include <vector>
+#include <random>
+
 
 struct network_group
 {
@@ -21,4 +23,6 @@ struct network_group
 	void fill_network(Network &network);
 
 	void set_t_network_size(T_Network &network);
+
+	void combine_vectors(Network &net_1, Network &net_2);
 };

@@ -11,7 +11,7 @@ void flip_vec(std::vector<float> &game_vec)
 }
 
 //takes highest number returned from network, and translates into an int 0-8
-int interpret(std::vector<float> decision_vec)
+int interpret(std::vector<float> &decision_vec)
 {
 	int decision = 0;
 	for (int x = 0; x < 9; x++)
@@ -22,7 +22,7 @@ int interpret(std::vector<float> decision_vec)
 	return decision;
 }
  
-bool check_win(std::vector<float> game)
+bool check_win(std::vector<float> &game)
 {
 	if (1 == game[0] && game[0] == game[1] && game[1] == game[2])
 		return true;
@@ -43,7 +43,7 @@ bool check_win(std::vector<float> game)
 	return false;
 }
 
-void print_game(std::vector<float> game)
+void print_game(std::vector<float> &game)
 {
 	for (int x = 0; x < 9; x++)
 	{
