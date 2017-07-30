@@ -4,6 +4,12 @@
 #include <iomanip>
 #include "network.h"
 
+bool fileExists(std::string fileName)
+{
+	std::ifstream infile(fileName);
+	return infile.good();
+}
+
 std::string save_network(Network & network, int generation, int number)
 {
 	std::string file_name = std::to_string(generation) + "_" + std::to_string(number) + "_network.txt";
