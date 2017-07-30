@@ -19,11 +19,11 @@ int main()
 	{
 		std::cout << "generate or play?\n";
 		std::getline(std::cin, option);
-		if (option == "play"|| option == "generate")
+		if (option == "play"||option == "generate")
 			valid = true;
 	}
 	std::cout << "\n";
-	if (option == "g")
+	if (option == "generate")
 	{
 		std::string save_time;
 		std::cout << "enter how often you would like to save networks, in seconds";
