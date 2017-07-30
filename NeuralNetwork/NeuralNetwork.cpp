@@ -17,7 +17,7 @@ int main()
 	auto now = time(NULL);
 	auto cout_time = time(NULL);
 	std::vector<network_group> network_v;
-	network_v.resize(51);
+	network_v.resize(101);
 	int count = 0;
 	while (true)
 	{
@@ -40,6 +40,11 @@ int main()
 					swaps++;
 				}
 			}
+			if (network_v[network_v.size()-1].fittness > network_v[network_v.size()-2].fittness)
+			{
+				std::swap(network_v[network_v.size() - 1], network_v[network_v.size() - 2]);
+				swaps++;
+			}
 			if (swaps == 0)
 				sorted = true;
 		}
@@ -48,9 +53,9 @@ int main()
 		std::uniform_int_distribution<int> random(0, (network_v.size() - 1) / 2); //marry vectors, top 37 reproduce together to remove bottom 38
 		for (int x = 0; x < (network_v.size() - 1) / 2; x++)
 		{
-			network_v[x + (network_v.size() -1) /2].combine_vectors(network_v[x].network, network_v[random(rng)].network);
+			network_v[x + (network_v.size() -1) /2].modify_vector(network_v[x].network);
 		}
-		network_v[network_v.size() - 1].combine_vectors(network_v[0].network, network_v[random(rng)].network);
+		network_v[network_v.size() - 1].modify_vector(network_v[0].network);
 		now = time(NULL);
 		if (abs(difftime(now,start)) > 7200)
 		{
@@ -67,9 +72,9 @@ int main()
 			{
 				std::cout << "fitness :" << network_v[x].fittness << '\n';
 			}
+			std::cout << "seconds until save:" << 7200 - abs(difftime(now, start)) << '\n';
 			cout_time = time(NULL);
 		}
-
 
 		for (int x = 0; x < network_v.size(); x++)
 		{

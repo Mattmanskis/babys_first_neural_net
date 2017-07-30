@@ -24,5 +24,5 @@ struct network_group
 
 	void set_t_network_size(T_Network &network);
 
-	void combine_vectors(Network &net_1, Network &net_2);
+	void modify_vector(Network &net_1);
 };
