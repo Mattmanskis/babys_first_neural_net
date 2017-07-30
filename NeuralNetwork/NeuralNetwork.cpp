@@ -15,6 +15,7 @@ int main()
 {
 	auto start = time(NULL);
 	auto now = time(NULL);
+	auto cout_time = time(NULL);
 	std::vector<network_group> network_v;
 	network_v.resize(51);
 	int count = 0;
@@ -59,13 +60,14 @@ int main()
 			}
 			start = time(NULL);
 		}
-		if (abs(difftime(now, start)) > 60)
+		if (abs(difftime(now, cout_time)) > 60)
 		{
 			std::cout << "generation " << count << '\n';
 			for (int x = 1; x < network_v.size(); x++)
 			{
 				std::cout << "fitness :" << network_v[x].fittness << '\n';
 			}
+			cout_time = time(NULL);
 		}
 
 
