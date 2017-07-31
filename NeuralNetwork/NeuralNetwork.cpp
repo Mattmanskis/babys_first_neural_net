@@ -95,9 +95,7 @@ int main()
 				max_fitness = network_v[0].fittness;
 				max_fitness_gen = gen_count;
 			}
-			std::random_device rd;
-			std::mt19937 rng(rd());
-			std::uniform_int_distribution<int> random(0, (network_v.size() - 1) / 2); //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
+			 //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
 			for (int x = 30; x < 45 ; x++)
 			{
 				network_v[x].modify_vector(network_v[0].network);

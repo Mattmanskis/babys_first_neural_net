@@ -4,6 +4,10 @@
 #include <time.h>
 #include <math.h>
 #include <utility>
+std::random_device rd;
+std::mt19937 rng(rd());
+std::uniform_real_distribution<float> random_0_1(0.0f, 1.0f);
+std::uniform_real_distribution<float> random_5_5(-.5f, .5f);
 
 
 std::vector<float> network_group::output(std::vector<float> input)
@@ -47,20 +51,16 @@ void network_group::set_network_size(Network & network)
 
 void network_group::fill_network(Network & network)
 {
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_real_distribution<float> random(-.5f, .5f);
-
 	for (int layer = 1; layer < network.size(); layer++)
 	{
 		if (layer != network.size() - 1)
 		{
-				network[layer][0][0] = random(rng);
+				network[layer][0][0] = random_5_5(rng);
 			for (int neuron = 1; neuron < network[layer].size(); neuron++)
 			{
 				for (int connection = 0; connection < network[layer][neuron].size(); connection++)
 				{
-					network[layer][neuron][connection] = random(rng);
+					network[layer][neuron][connection] = random_5_5(rng);
 				}
 			}
 		}
@@ -70,7 +70,7 @@ void network_group::fill_network(Network & network)
 			{
 				for (int connection = 0; connection < network[layer][neuron].size(); connection++)
 				{
-					network[layer][neuron][connection] = random(rng);
+					network[layer][neuron][connection] = random_5_5(rng);
 				}
 			}
 		}
@@ -89,9 +89,6 @@ void network_group::set_t_network_size(T_Network & network)
 
 void network_group::modify_vector(Network & net_1)
 {
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_real_distribution<float> random(0.0f, 1.0f);
 	network = net_1;
 	for (int layer = 1; layer < network.size() - 1; layer++)
 	{
@@ -99,8 +96,8 @@ void network_group::modify_vector(Network & net_1)
 		{
 			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
 			{
-				float rand = random(rng);
-				float rand2 = random(rng);
+				float rand = random_0_1(rng);
+				float rand2 = random_0_1(rng);
 				if (rand2 < .0025f)
 					network[layer][neuron][connection] += rand;
 				if (rand2 < .005f && rand2 >= .0025f)
