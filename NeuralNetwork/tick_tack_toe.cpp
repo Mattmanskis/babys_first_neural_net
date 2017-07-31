@@ -164,7 +164,7 @@ void human_v_network(network_group & net)
 			}
 		}
 		else {
-			std::cout << "Bad Move" << std::endl;
+			std::cout << "Error: Bad Move" << std::endl;
 		}
 		flip_vec(game);
 	}
