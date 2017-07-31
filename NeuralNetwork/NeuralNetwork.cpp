@@ -87,7 +87,7 @@ int main()
 				{
 					std::cout << "fitness :" << network_v[x].fittness << '\n';
 				}
-				std::cout << "seconds until save:" << 7200 - abs(difftime(now, save_timer)) << '\n';
+				std::cout << "seconds until save:" << std::stoi(save_time) - abs(difftime(now, save_timer)) << '\n';
 				cout_timer = time(NULL);
 			}
 
