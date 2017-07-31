@@ -136,14 +136,14 @@ void human_v_network(network_group & net)
 	}
 	for (int x = 0; x < 9; x++)
 	{
+		print_game(game);
 		int decision;
-		if ((x+offset) % 2 == 0) //if even net_1 goes
+		if ((x+offset) % 2 == 0) //if even player goes
 		{
-			print_game(game);
 			std::getline(std::cin, choice);
 			decision = stoi(choice);
 		}
-		else //else net_2 goes
+		else //else network goes
 		{
 			decision = interpret(net.output(game));
 		}
@@ -162,6 +162,9 @@ void human_v_network(network_group & net)
 				}
 				return;
 			}
+		}
+		else {
+			std::cout << "Bad Move" << std::endl;
 		}
 		flip_vec(game);
 	}

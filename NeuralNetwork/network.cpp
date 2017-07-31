@@ -43,7 +43,6 @@ void network_group::set_network_size(Network & network)
 			network[layer][neuron].resize(network[layer - 1].size()); //resize neuron to hold connection weights to previous layer
 		}
 	}
-
 }
 
 void network_group::fill_network(Network & network)
