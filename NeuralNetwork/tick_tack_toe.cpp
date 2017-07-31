@@ -138,7 +138,7 @@ void human_v_network(network_group & net)
 	{
 		print_game(game);
 		int decision;
-		if (x+offset % 2 == 0) //if even net_1 goes
+		if ((x+offset) % 2 == 0) //if even net_1 goes
 		{
 			std::getline(std::cin, choice);
 			decision = stoi(choice);
@@ -152,7 +152,7 @@ void human_v_network(network_group & net)
 			game[decision] = 1;
 			if (check_win(game))
 			{
-				if (x+offset % 2 == 0)
+				if ((x+offset) % 2 == 0)
 				{
 					std::cout << "You win! \n";
 				}
