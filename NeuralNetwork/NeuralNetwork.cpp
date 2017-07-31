@@ -110,5 +110,6 @@ int main()
 		load_network(n.network, file_name);
 		human_v_network(n);
 	}
+	system("PAUSE");
 }
 
