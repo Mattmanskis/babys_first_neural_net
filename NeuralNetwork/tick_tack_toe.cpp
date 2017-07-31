@@ -6,7 +6,7 @@
 void flip_vec(std::vector<float>& game_vec)
 {
 	for (int x = 0; x < 9; x++)
-		game_vec[0] *= -1;
+		game_vec[x] *= -1;
 }
 
 //takes highest number returned from network, and translates into an int 0-8
@@ -136,10 +136,10 @@ void human_v_network(network_group & net)
 	}
 	for (int x = 0; x < 9; x++)
 	{
-		print_game(game);
 		int decision;
 		if ((x+offset) % 2 == 0) //if even net_1 goes
 		{
+			print_game(game);
 			std::getline(std::cin, choice);
 			decision = stoi(choice);
 		}
