@@ -52,13 +52,14 @@ int main()
 		}
 		else
 		{
-			network_v.resize(101);
+			network_v.resize(90);
 		}
 
 		auto save_timer = time(NULL);
 		auto cout_timer = time(NULL);
 		auto now = time(NULL);
-
+		int max_fitness = -1000;
+		int max_fitness_gen = 0;
 
 		while (true)
 		{
@@ -89,13 +90,28 @@ int main()
 				if (swaps == 0)
 					sorted = true;
 			}
+			if (network_v[0].fittness > max_fitness)
+			{
+				max_fitness = network_v[0].fittness;
+				max_fitness_gen = gen_count;
+			}
 			std::random_device rd;
 			std::mt19937 rng(rd());
 			std::uniform_int_distribution<int> random(0, (network_v.size() - 1) / 2); //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
-			for (int x = 0; x < (network_v.size() - 1) / 2; x++)
+			for (int x = 30; x < 45 ; x++)
 			{
-				network_v[x + (network_v.size() - 1) / 2].modify_vector(network_v[x].network);
+				network_v[x].modify_vector(network_v[0].network);
 			}
+			for (int x = 45; x < 60; x++)
+			{
+				network_v[x].modify_vector(network_v[1].network);
+			}
+			for (int x = 2; x < 30; x++)
+			{
+				network_v[x + 58].modify_vector(network_v[x].network);
+			}
+			network_v[88].modify_vector(network_v[2].network);
+			network_v[89].modify_vector(network_v[3].network);
 			network_v[network_v.size() - 1].modify_vector(network_v[0].network);
 			now = time(NULL);
 			if (abs(difftime(now, save_timer)) > std::stoi(save_time)) //saves all networks every save_time seconds
@@ -114,6 +130,7 @@ int main()
 					std::cout << "fitness :" << network_v[x].fittness << '\n';
 				}
 				std::cout << "seconds until save:" << std::stoi(save_time) - abs(difftime(now, save_timer)) << '\n';
+				std::cout << "max fitness is " << max_fitness << " at gen " << max_fitness_gen << '\n';
 				cout_timer = time(NULL);
 			}
 
