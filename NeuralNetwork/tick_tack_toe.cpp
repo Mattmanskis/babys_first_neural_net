@@ -94,26 +94,26 @@ void network_v_network(network_group & net_1, network_group & net_2)
 			{
 				if (x % 2 == 0)
 				{
-					net_1.fittness += 10;
-					net_2.fittness -= 5;
+					net_1.fittness += 100;
+					net_2.fittness -= 50;
 				}
 				else
 				{
-					net_2.fittness += 10;
-					net_1.fittness -= 5;
+					net_2.fittness += 100;
+					net_1.fittness -= 50;
+				}
+				if (net_1_streak)
+				{
+					net_1.fittness += 5;
+				}
+				if (net_2_streak)
+				{
+					net_2.fittness += 5;
 				}
 				return;
 			}
 		}
 		flip_vec(game);
-	}
-	if (net_1_streak)
-	{
-		net_1.fittness += 2;
-	}
-	if (net_2_streak)
-	{
-		net_2.fittness += 2;
 	}
 }
 
