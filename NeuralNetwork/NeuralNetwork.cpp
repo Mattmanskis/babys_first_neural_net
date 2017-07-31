@@ -22,18 +22,44 @@ int main()
 		if (option == "play"||option == "generate")
 			valid = true;
 	}
+	valid = false;
 	std::cout << "\n";
 	if (option == "generate")
 	{
 		std::string save_time;
+		std::string output_time;
+		std::vector<network_group> network_v; //creates a vector of network groups
+		int gen_count = 0;
+
 		std::cout << "enter how often you would like to save networks, in seconds";
 		std::getline(std::cin, save_time);
+
+		std::cout << "enter how often you would like to get information from console, in seconds";
+		std::getline(std::cin, output_time);
+
+		while (!valid)
+		{
+			std::cout << "start from existing generation of networks? y/n \n";
+			std::getline(std::cin, option);
+			std::cout << '\n';
+			if (option == "y" || option == "n")
+				valid = true;
+		}
+		
+		if (option == "y")
+		{
+			gen_count = load_network_vector(network_v);
+		}
+		else
+		{
+			network_v.resize(101);
+		}
+
 		auto save_timer = time(NULL);
 		auto cout_timer = time(NULL);
 		auto now = time(NULL);
-		std::vector<network_group> network_v; //creates a vector of network groups
-		network_v.resize(101);
-		int count = 0;
+
+
 		while (true)
 		{
 			for (int x = 0; x < network_v.size(); x++)
@@ -76,13 +102,13 @@ int main()
 			{
 				for (int x = 0; x < network_v.size()/2; x++)
 				{
-					save_network(network_v[x].network, count, x);
+					save_network(network_v[x].network, gen_count, x);
 				}
 				save_timer = time(NULL);
 			}
-			if (abs(difftime(now, cout_timer)) > 60) //outputs fitness of last generation every 60 seconds
+			if (abs(difftime(now, cout_timer)) > std::stoi(output_time)) //outputs fitness of last generation every 60 seconds
 			{
-				std::cout << "generation " << count << '\n';
+				std::cout << "generation " << gen_count << '\n';
 				for (int x = 1; x < network_v.size(); x++)
 				{
 					std::cout << "fitness :" << network_v[x].fittness << '\n';
@@ -95,10 +121,10 @@ int main()
 			{
 				network_v[x].fittness = 0;
 			}
-			count++;
+			gen_count++;
 		}
 	}
-	else //user decides to take on one of the ai
+	else if(option == "play")//user decides to take on one of the ai
 	{
 		std::string file_name;
 		network_group n; 
