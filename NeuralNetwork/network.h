@@ -29,3 +29,4 @@ struct network_group
 };
 
 int get_random_8_0();
+
