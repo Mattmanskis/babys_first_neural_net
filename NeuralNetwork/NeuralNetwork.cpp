@@ -60,6 +60,23 @@ int main()
 			network_v.resize(90);
 		}
 
+		valid == false;
+
+		bool use_ai = false;
+
+		while (!valid)
+		{
+			std::cout << "\n use ai? y/n \n";
+			std::getline(std::cin, option);
+			if (option == "y" || option == "n")
+				valid = true;
+		}
+
+		if (option == "y")
+		{
+			use_ai = true;
+		}
+
 		auto save_timer = time(NULL);
 		auto cout_timer = time(NULL);
 		auto now = time(NULL);
@@ -68,10 +85,23 @@ int main()
 
 		while (true)
 		{
-			for (int x = 0; x < network_v.size(); x++)
+			if (use_ai)
 			{
-				ai_v_network(network_v[x], true);
-				ai_v_network(network_v[x], false);
+				for (int x = 0; x < network_v.size(); x++)
+				{
+					ai_v_network(network_v[x], true);
+					ai_v_network(network_v[x], false);
+				}
+			}
+			else
+			{
+				for (int x = 0; x < network_v.size(); x++)
+				{
+					for (int y = 0; y < network_v.size(); y++)
+					{
+						network_v_network(network_v[x], network_v[y]);
+					}
+				}
 			}
 			bool sorted = false;
 			while (!sorted) //sort vector of networks by fitness
