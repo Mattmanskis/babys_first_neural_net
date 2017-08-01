@@ -77,6 +77,23 @@ int main()
 			use_ai = true;
 		}
 
+		valid = false;
+
+		bool use_auto_save = false;
+
+		while (!valid)
+		{
+			std::cout << "\n auto save new highest network? y/n \n";
+			std::getline(std::cin, option);
+			if (option == "y" || option == "n")
+				valid = true;
+		}
+
+		if (option == "y")
+		{
+			use_auto_save = true;
+		}
+
 		auto save_timer = time(NULL);
 		auto cout_timer = time(NULL);
 		auto now = time(NULL);
@@ -127,11 +144,14 @@ int main()
 			{
 				max_fitness = network_v[0].fitness;
 				max_fitness_gen = gen_count;
-				if (gen_count > 30)
+				if (use_auto_save)
 				{
-					for (int x = 0; x < network_v.size() / 2; x++)
+					if (gen_count > 30)
 					{
-						save_network(network_v[x].network, max_fitness_gen, x);
+						for (int x = 0; x < network_v.size() / 2; x++)
+						{
+							save_network(network_v[x].network, max_fitness_gen, x);
+						}
 					}
 				}
 			}
