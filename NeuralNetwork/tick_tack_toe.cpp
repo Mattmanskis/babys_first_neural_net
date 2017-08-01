@@ -97,7 +97,7 @@ int ai_decision(std::vector<float> game)
 		int line_count=0;
 		while (search_game(game, 1, piece_count) != -1) //goes through game looking for pieces that are yours
 		{
-			while (search_lines(search_game(game, 1, piece_count), line_count)) //for chosen piece looks for a line of three conneceted to that piece
+			while (search_lines(search_game(game, 1, piece_count), line_count) != -1) //for chosen piece looks for a line of three conneceted to that piece
 			{
 				bool good = true;
 				val = search_lines(search_game(game, 1, piece_count), line_count); //for chosen line looks through peices that are blocking it
