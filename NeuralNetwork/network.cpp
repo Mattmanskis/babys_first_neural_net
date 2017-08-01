@@ -8,7 +8,7 @@ std::random_device rd;
 std::mt19937 rng(rd());
 std::uniform_real_distribution<float> random_0_1(0.0f, 1.0f);
 std::uniform_real_distribution<float> random_5_5(-.5f, .5f);
-
+std::uniform_int_distribution<int> random_int_0_8(0, 8);
 
 std::vector<float> network_group::output(std::vector<float> input)
 {
@@ -109,4 +109,9 @@ void network_group::modify_vector(Network & net_1, float mutation_chance)
 			}
 		}
 	}
+}
+
+int get_random_8_0()
+{
+	return random_int_0_8(rng);
 }
