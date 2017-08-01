@@ -87,7 +87,7 @@ void network_group::set_t_network_size(T_Network & network)
 	network[4].resize(9);
 }
 
-void network_group::modify_vector(Network & net_1)
+void network_group::modify_vector(Network & net_1, float mutation_chance)
 {
 	network = net_1;
 	for (int layer = 1; layer < network.size() - 1; layer++)
@@ -98,13 +98,13 @@ void network_group::modify_vector(Network & net_1)
 			{
 				float rand = random_0_1(rng);
 				float rand2 = random_0_1(rng);
-				if (rand2 < .0025f)
+				if (rand2 < .0025f * mutation_chance)
 					network[layer][neuron][connection] += rand;
-				if (rand2 < .005f && rand2 >= .0025f)
+				if (rand2 < .005f *mutation_chance && rand2 >= .0025f *mutation_chance)
 					network[layer][neuron][connection] -= rand;
-				if (rand2 < .0075 && rand2 >= .005)
+				if (rand2 < .0075 *mutation_chance && rand2 >= .005 *mutation_chance)
 					network[layer][neuron][connection] *= rand;
-				if (rand2 <= .01 && rand2 >= .0075)
+				if (rand2 <= .01 *mutation_chance && rand2 >= .0075 *mutation_chance)
 					network[layer][neuron][connection] *= -1;
 			}
 		}

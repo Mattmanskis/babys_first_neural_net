@@ -28,20 +28,25 @@ int main()
 	{
 		std::string save_time;
 		std::string output_time;
+		std::string mutation_chance_string;
+		float mutation_chance;
 		std::vector<network_group> network_v; //creates a vector of network groups
 		int gen_count = 0;
 
-		std::cout << "enter how often you would like to save networks, in seconds";
+		std::cout << "enter how often you would like to save networks, in seconds \n";
 		std::getline(std::cin, save_time);
 
-		std::cout << "enter how often you would like to get information from console, in seconds";
+		std::cout << " \n enter how often you would like to get information from console, in seconds \n";
 		std::getline(std::cin, output_time);
+
+		std::cout << "\n enter mutation chance as a float 0-100 \n";
+		std::getline(std::cin, mutation_chance_string);
+		mutation_chance = std::stof(mutation_chance_string);
 
 		while (!valid)
 		{
-			std::cout << "start from existing generation of networks? y/n \n";
+			std::cout << "\n start from existing generation of networks? y/n \n";
 			std::getline(std::cin, option);
-			std::cout << '\n';
 			if (option == "y" || option == "n")
 				valid = true;
 		}
@@ -96,19 +101,18 @@ int main()
 			 //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
 			for (int x = 30; x < 45 ; x++)
 			{
-				network_v[x].modify_vector(network_v[0].network);
+				network_v[x].modify_vector(network_v[0].network, mutation_chance);
 			}
 			for (int x = 45; x < 60; x++)
 			{
-				network_v[x].modify_vector(network_v[1].network);
+				network_v[x].modify_vector(network_v[1].network, mutation_chance);
 			}
 			for (int x = 2; x < 30; x++)
 			{
-				network_v[x + 58].modify_vector(network_v[x].network);
+				network_v[x + 58].modify_vector(network_v[x].network, mutation_chance);
 			}
-			network_v[88].modify_vector(network_v[2].network);
-			network_v[89].modify_vector(network_v[3].network);
-			network_v[network_v.size() - 1].modify_vector(network_v[0].network);
+			network_v[88].modify_vector(network_v[2].network, mutation_chance);
+			network_v[89].modify_vector(network_v[3].network, mutation_chance);
 			now = time(NULL);
 			if (abs(difftime(now, save_timer)) > std::stoi(save_time)) //saves all networks every save_time seconds
 			{
