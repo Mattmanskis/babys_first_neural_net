@@ -4,6 +4,7 @@
 #include <iomanip>
 #include "network.h"
 #include <iostream>
+#include <cassert>
 
 bool fileExists(std::string fileName)
 {
@@ -77,7 +78,7 @@ void load_network(Network & network, std::string file_name)
 			layer++;
 			break;
 		default:
-			_ASSERT(true);
+			assert(false);
 		}
 		temp = data.substr(indicators[l_index]+1,indicators[l_index]+11);
 		network[layer][neuron][connection] = std::stof(temp);

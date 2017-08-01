@@ -10,7 +10,7 @@ void flip_vec(std::vector<float>& game_vec)
 }
 
 //takes highest number returned from network, and translates into an int 0-8
-int interpret(std::vector<float>& decision_vec)
+int interpret(const std::vector<float>& decision_vec)
 {
 	int decision = 0;
 	for (int x = 0; x < 9; x++)
