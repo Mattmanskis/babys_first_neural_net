@@ -8,7 +8,7 @@ struct network_group
 {
 	Network network;
 	T_Network t_network;
-	int fittness = 0;
+	int fitness = 0;
 	network_group()
 	{
 		set_network_size(network);
