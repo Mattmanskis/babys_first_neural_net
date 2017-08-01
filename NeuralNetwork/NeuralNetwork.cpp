@@ -97,9 +97,12 @@ int main()
 			{
 				max_fitness = network_v[0].fitness;
 				max_fitness_gen = gen_count;
-				for (int x = 0; x < network_v.size() / 2; x++)
+				if (gen_count > 30)
 				{
-					save_network(network_v[x].network, gen_count, x);
+					for (int x = 0; x < network_v.size() / 2; x++)
+					{
+						save_network(network_v[x].network, max_fitness_gen, x);
+					}
 				}
 			}
 			 //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
