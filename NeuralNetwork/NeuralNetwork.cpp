@@ -65,10 +65,8 @@ int main()
 		{
 			for (int x = 0; x < network_v.size(); x++)
 			{
-				for (int y = 0; y < network_v.size(); y++)
-				{
-					network_v_network(network_v[x], network_v[y]); //all networks battle against eachother to determine fitness
-				}
+				ai_v_network(network_v[x], true);
+				ai_v_network(network_v[x], false);
 			}
 			bool sorted = false;
 			while (!sorted) //sort vector of networks by fitness

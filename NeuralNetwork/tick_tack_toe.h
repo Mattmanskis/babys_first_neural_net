@@ -15,4 +15,6 @@ void print_game(std::vector<float> &game);
 
 void network_v_network(network_group &net_1, network_group &net_2);
 
+void ai_v_network(network_group & net_1, bool goes_first);
+
 void human_v_network(network_group &net);
