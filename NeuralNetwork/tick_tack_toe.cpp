@@ -149,7 +149,7 @@ void ai_v_network(network_group & net_1,bool goes_first)
 		{
 			if ((x + offset) % 2 == 0)
 			{
-				net_1.fittness -= 5;
+				net_1.fitness -= 5;
 			}
 			else
 				std::cout << "ai bad move \n";
@@ -158,18 +158,18 @@ void ai_v_network(network_group & net_1,bool goes_first)
 		{
 			if ((x + offset) % 2 == 0)
 			{
-				net_1.fittness += 5;
+				net_1.fitness += 5;
 			}
 			game[decision] = 1;
 			if (check_win(game))
 			{
 				if ((x + offset) % 2 == 0)
 				{
-					net_1.fittness += 100;
+					net_1.fitness += 100;
 				}
 				else
 				{
-					net_1.fittness -= 25;
+					net_1.fitness -= 25;
 				}
 				return;
 			}
@@ -203,12 +203,12 @@ void network_v_network(network_group & net_1, network_group & net_2)
 		{
 			if (x % 2 == 0)
 			{
-				net_1.fittness--;
+				net_1.fitness--;
 				net_1_streak = false;
 			}
 			else
 			{
-				net_2.fittness--;
+				net_2.fitness--;
 				net_2_streak = false;
 			}
 		}
@@ -219,13 +219,13 @@ void network_v_network(network_group & net_1, network_group & net_2)
 			{
 				if (x % 2 == 0)
 				{
-					net_1.fittness += 10;
-					net_2.fittness -= 5;
+					net_1.fitness += 10;
+					net_2.fitness -= 5;
 				}
 				else
 				{
-					net_2.fittness += 10;
-					net_1.fittness -= 5;
+					net_2.fitness += 10;
+					net_1.fitness -= 5;
 				}
 				return;
 			}
@@ -234,11 +234,11 @@ void network_v_network(network_group & net_1, network_group & net_2)
 	}
 	if (net_1_streak)
 	{
-		net_1.fittness += 2;
+		net_1.fitness += 2;
 	}
 	if (net_2_streak)
 	{
-		net_2.fittness += 2;
+		net_2.fitness += 2;
 	}
 }
 

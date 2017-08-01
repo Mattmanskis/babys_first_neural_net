@@ -79,13 +79,13 @@ int main()
 				int swaps = 0;
 				for (int x = 0; x < network_v.size() - 2; x++)
 				{
-					if (network_v[x + 1].fittness > network_v[x].fittness)
+					if (network_v[x + 1].fitness > network_v[x].fitness)
 					{
 						std::swap(network_v[x + 1], network_v[x]);
 						swaps++;
 					}
 				}
-				if (network_v[network_v.size() - 1].fittness > network_v[network_v.size() - 2].fittness)
+				if (network_v[network_v.size() - 1].fitness > network_v[network_v.size() - 2].fitness)
 				{
 					std::swap(network_v[network_v.size() - 1], network_v[network_v.size() - 2]);
 					swaps++;
@@ -93,9 +93,9 @@ int main()
 				if (swaps == 0)
 					sorted = true;
 			}
-			if (network_v[0].fittness > max_fitness)
+			if (network_v[0].fitness > max_fitness)
 			{
-				max_fitness = network_v[0].fittness;
+				max_fitness = network_v[0].fitness;
 				max_fitness_gen = gen_count;
 			}
 			 //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
@@ -127,7 +127,7 @@ int main()
 				std::cout << "generation " << gen_count << '\n';
 				for (int x = 1; x < network_v.size(); x++)
 				{
-					std::cout << "fitness :" << network_v[x].fittness << '\n';
+					std::cout << "fitness :" << network_v[x].fitness << '\n';
 				}
 				std::cout << "seconds until save:" << std::stoi(save_time) - abs(difftime(now, save_timer)) << '\n';
 				std::cout << "max fitness is " << max_fitness << " at gen " << max_fitness_gen << '\n';
@@ -136,7 +136,7 @@ int main()
 
 			for (int x = 0; x < network_v.size(); x++) //resets fitnesses for next generation
 			{
-				network_v[x].fittness = 0;
+				network_v[x].fitness = 0;
 			}
 			gen_count++;
 		}
