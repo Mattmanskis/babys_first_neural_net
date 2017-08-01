@@ -38,7 +38,6 @@ void network_group::set_network_size(Network & network)
 	network[2].resize(61);
 	network[3].resize(61);
 	network[4].resize(9);
-	int x;
 	for (int layer = 1; layer < network.size(); layer++)
 	{
 		network[layer][0].resize(1);

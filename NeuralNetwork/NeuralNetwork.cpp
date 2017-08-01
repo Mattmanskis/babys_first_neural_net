@@ -60,7 +60,7 @@ int main()
 			network_v.resize(90);
 		}
 
-		valid == false;
+		valid = false;
 
 		bool use_ai = false;
 
