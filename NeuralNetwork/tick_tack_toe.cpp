@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "tick_tack_toe.h"
+#include "network.h"
 #include <string>
 const std::vector<std::vector<float>> lines{ { 0,1,2 }, { 3,4,5 } ,{ 6,7,8 },{ 0,3,6 },{ 1,4,7 },{ 2,5,8 },{ 0,4,8 },{ 2,4,6 } };
 //game vec flipped between each turn for consistancy, and faster learning, 1 is always you -1 is always them 
@@ -89,8 +90,8 @@ int search_lines(int value, int number_to_skip) //finds the lines that you can w
 int ai_decision(std::vector<float> game)
 {
 	int val; 
-	if (search_game(game, -1,0) == search_game(game, 1,0)) //if there are no plays on the board
-		return 0;
+	if (search_game(game, -1, 0) == search_game(game, 1, 0)) //if there are no plays on the board
+		return get_random_8_0();
 	else
 	{
 		int piece_count=0;

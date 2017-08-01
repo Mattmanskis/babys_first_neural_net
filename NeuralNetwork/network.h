@@ -25,4 +25,7 @@ struct network_group
 	void set_t_network_size(T_Network &network);
 
 	void network_group::modify_vector(Network & net_1, float mutation_chance);
+
 };
+
+int get_random_8_0();
