@@ -128,6 +128,7 @@ void ai_v_network(network_group & net_1,bool goes_first)
 	std::vector<float> game;
 	game.resize(9);
 	int offset = 0;
+	int ai_turns = 0;
 	if (!goes_first)
 		offset++;
 	for (int x = 0; x < 9; x++) //set all squares to empty
@@ -140,8 +141,9 @@ void ai_v_network(network_group & net_1,bool goes_first)
 		if ((x + offset) % 2 == 0) //if x+offset is even net_1 goes
 		{
 			decision = interpret(net_1.output(game));
+			ai_turns++;
 		}
-		else //ai net_2 goes
+		else //ai goes
 		{
 			decision = ai_decision(game);
 		}
@@ -149,7 +151,7 @@ void ai_v_network(network_group & net_1,bool goes_first)
 		{
 			if ((x + offset) % 2 == 0)
 			{
-				net_1.fitness -= 5;
+				net_1.fitness -= 50;
 			}
 			else
 				std::cout << "ai bad move \n";
@@ -158,18 +160,15 @@ void ai_v_network(network_group & net_1,bool goes_first)
 		{
 			if ((x + offset) % 2 == 0)
 			{
-				net_1.fitness += 5;
+				net_1.fitness += 10;
 			}
 			game[decision] = 1;
 			if (check_win(game))
 			{
 				if ((x + offset) % 2 == 0)
 				{
-					net_1.fitness += 100;
-				}
-				else
-				{
-					net_1.fitness -= 25;
+					//if net wins it gains 500 fitness total from game 
+					net_1.fitness += 500 - ai_turns * 10;
 				}
 				return;
 			}
@@ -182,8 +181,8 @@ void network_v_network(network_group & net_1, network_group & net_2)
 {
 	std::vector<float> game;
 	game.resize(9);
-	bool net_1_streak = true;
-	bool net_2_streak = true;
+	int net_1_moves = 0;
+	int net_2_moves = 0;
 	for (int x = 0; x < 9; x++) //set all squares to empty
 	{
 		game[x] = 0;
@@ -194,51 +193,49 @@ void network_v_network(network_group & net_1, network_group & net_2)
 		if (x % 2 == 0) //if even net_1 goes
 		{
 			decision = interpret(net_1.output(game));
+			net_1_moves++;
 		}
 		else //else net_2 goes
 		{
 			decision = interpret(net_2.output(game));
+			net_2_moves++;
 		}
 		if (game[decision] != 0)
 		{
-			if (x % 2 == 0)
+			if (x % 2 == 0) //loses significant amounts of fitness for playing on filled squares
 			{
-				net_1.fitness--;
-				net_1_streak = false;
+				net_1.fitness -= 50;
 			}
 			else
 			{
-				net_2.fitness--;
-				net_2_streak = false;
+				net_2.fitness -= 50;
 			}
 		}
 		else
 		{
+			if (x % 2 == 0) //nets do gain some fitness for playing on open squares
+			{
+				net_1.fitness += 10;
+			}
+			else
+			{
+				net_2.fitness += 10;
+			}
 			game[decision] = 1;
 			if (check_win(game))
 			{
 				if (x % 2 == 0)
 				{
-					net_1.fitness += 10;
-					net_2.fitness -= 5;
+					net_1.fitness += 500 - net_1_moves * 10;
 				}
 				else
 				{
-					net_2.fitness += 10;
-					net_1.fitness -= 5;
+					net_1.fitness += 500 - net_1_moves * 10;
 				}
 				return;
 			}
 		}
 		flip_vec(game);
-	}
-	if (net_1_streak)
-	{
-		net_1.fitness += 2;
-	}
-	if (net_2_streak)
-	{
-		net_2.fitness += 2;
 	}
 }
 
@@ -246,7 +243,7 @@ void human_v_network(network_group & net)
 {
 	std::string choice;
 	std::cout << "For this game each turn you will enter a number 0-8 which will represent your move, \n";
-	std::cout << "0 represents upper left, 4 the middle square, and 8 lower right \n";
+	std::cout << "0 represents upper left, 4 the middle square, and 8 lower right etc.\n";
 	std::cout << "Would you like to go first y\n? \n";
 	while (choice != "y" && choice != "n")
 		std::getline(std::cin, choice);

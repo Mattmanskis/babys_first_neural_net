@@ -30,20 +30,83 @@ std::vector<float> network_group::output(std::vector<float> input)
 	return(t_network[t_network.size() - 1]);
 }
 
-void network_group::set_network_size(Network & network)
+void network_group::backprop(std::vector<float> input, std::vector<float> output, float training_weight)
 {
-	network.resize(5); // 5 layers
-	network[0].resize(9); //#of neurons per layer
-	network[1].resize(61);
-	network[2].resize(61);
-	network[3].resize(61);
-	network[4].resize(9);
+	t_network[0] = input;
+	float val = 0; 
+	for (int layer = 1; layer < network.size(); layer++)
+	{
+		t_network[layer][0] = network[layer][0][0];
+		for (int neuron = 1; neuron < network[layer].size(); neuron++)
+		{
+			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+			{
+				val += network[layer][neuron][connection] * t_network[layer - 1][connection];
+			}
+			t_network[layer][neuron] = 1 / (1 + exp(-.4*val));
+			val = 0;
+		}
+	}
+
+	//finds error based on expected output and saves it in the last layer of error net
+	for (int x = 0; x < output.size(); x++)
+	{
+		error_net[network_specs[0]-1][x][0] = output[x] - t_network[network_specs[0] - 1][x];
+	}
+
+	for (int layer = network_specs[0] -1; layer > 0; layer--)
+	{
+		for (int neuron = 0; neuron < network[layer].size(); neuron++)
+		{
+			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+			{
+				val += network[layer][neuron][connection] * t_network[layer + 1][connection];
+			}
+			t_network[layer][neuron] = 1 / (1 + exp(-.4*val));
+			val = 0;
+		}
+	}
+}
+
+void network_group::set_network_size(Network & network, std::vector<int> specs)
+{
+	network.resize(specs[0]); // 5 layers
+	for (int x = 0; x < specs.size()-1; x++)
+	{
+		//set layer sizes
+		network[x].resize(specs[x+1]);
+	}
 	for (int layer = 1; layer < network.size(); layer++)
 	{
 		network[layer][0].resize(1);
 		for (int neuron = 1; neuron < network[layer].size(); neuron++)
 		{
 			network[layer][neuron].resize(network[layer - 1].size()); //resize neuron to hold connection weights to previous layer
+		}
+	}
+}
+
+void network_group::set_t_network_size(T_Network & network, std::vector<int> specs)
+{
+	network.resize(specs[0]); // 5 layers
+	for (int x = 1; x < specs.size(); x++)
+	{
+		network[x].resize(specs[x]);
+	}
+}
+
+void network_group::set_error_network_size(Network & network, std::vector<int> specs)
+{
+	network.resize(specs[0]); // 5 layers
+	for (int x = 1; x < specs.size(); x++)
+	{
+		network[x].resize(specs[x]);
+	}
+	for (int layer = 1; layer < network.size(); layer++)
+	{
+		for (int neuron = 1; neuron < network[layer].size(); neuron++)
+		{
+			network[layer][neuron].resize(specs[specs.size()-1]); //resize neuron to hold an error value reletive to each output neuron
 		}
 	}
 }
@@ -74,16 +137,6 @@ void network_group::fill_network(Network & network)
 			}
 		}
 	}
-}
-
-void network_group::set_t_network_size(T_Network & network)
-{
-	network.resize(5); // 5 layers
-	network[0].resize(9); //#of neurons per layer
-	network[1].resize(61);
-	network[2].resize(61);
-	network[3].resize(61);
-	network[4].resize(9);
 }
 
 void network_group::modify_vector(Network & net_1, float mutation_chance)

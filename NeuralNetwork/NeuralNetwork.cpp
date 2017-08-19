@@ -28,7 +28,7 @@ int main()
 	{
 		std::string save_time;
 		std::string output_time;
-		std::string mutation_chance_string;
+		int start_time_o = 0;
 		float mutation_chance;
 		std::vector<network_group> network_v; //creates a vector of network groups
 		int gen_count = 0;
@@ -38,27 +38,6 @@ int main()
 
 		std::cout << " \n enter how often you would like to get information from console, in seconds \n";
 		std::getline(std::cin, output_time);
-
-		std::cout << "\n enter mutation chance as a float 0-100 \n";
-		std::getline(std::cin, mutation_chance_string);
-		mutation_chance = std::stof(mutation_chance_string);
-
-		while (!valid)
-		{
-			std::cout << "\n start from existing generation of networks? y/n \n";
-			std::getline(std::cin, option);
-			if (option == "y" || option == "n")
-				valid = true;
-		}
-		
-		if (option == "y")
-		{
-			gen_count = load_network_vector(network_v);
-		}
-		else
-		{
-			network_v.resize(90);
-		}
 
 		valid = false;
 
@@ -94,10 +73,37 @@ int main()
 			use_auto_save = true;
 		}
 
+		valid = false;
+
+		while (!valid)
+		{
+			std::cout << "\n start from existing generation of networks? y/n \n";
+			std::getline(std::cin, option);
+			if (option == "y" || option == "n")
+				valid = true;
+		}
+		
+		if (option == "y")
+		{
+
+			gen_count = load_network_vector(network_v);
+			std::cout << " \n enter start time in seconds \n";
+			std::string temp;
+			std::getline(std::cin, temp);
+			start_time_o = std::stoi(temp);
+		}
+		else
+		{
+			network_v.resize(90);
+		}
+
+
+
+		auto start_time = time(NULL);
 		auto save_timer = time(NULL);
 		auto cout_timer = time(NULL);
 		auto now = time(NULL);
-		int max_fitness = -1000;
+		float max_fitness = -1000000;
 		int max_fitness_gen = 0;
 
 		while (true)
@@ -106,8 +112,10 @@ int main()
 			{
 				for (int x = 0; x < network_v.size(); x++)
 				{
-					ai_v_network(network_v[x], true);
+					ai_v_network(network_v[x], true); //plays ai with both first and second move
 					ai_v_network(network_v[x], false);
+					// divide fitness by 2 games to get avarage fitness
+					network_v[x].fitness *= .5;
 				}
 			}
 			else
@@ -119,8 +127,15 @@ int main()
 						network_v_network(network_v[x], network_v[y]);
 					}
 				}
+				for (int x = 0; x < network_v.size(); x++)
+				{
+					// divide fitness by number of networks *2 to get avarage fitness 
+					network_v[x].fitness = network_v[x].fitness / (network_v.size() * 2);
+				}
 			}
+
 			bool sorted = false;
+
 			while (!sorted) //sort vector of networks by fitness
 			{
 				int swaps = 0;
@@ -140,6 +155,7 @@ int main()
 				if (swaps == 0)
 					sorted = true;
 			}
+
 			if (network_v[0].fitness > max_fitness)
 			{
 				max_fitness = network_v[0].fitness;
@@ -155,6 +171,9 @@ int main()
 					}
 				}
 			}
+
+			// mutation chance  = f(x)/f(x)^2 for f(x) = time runing / (max_possible_fitness - current_highest_fitness) + 2
+			mutation_chance = 100 * (abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2) / ((abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2) *  (abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2));
 			 //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
 			for (int x = 30; x < 45 ; x++)
 			{
@@ -208,7 +227,8 @@ int main()
 			std::getline(std::cin, file_name);
 		}
 		load_network(n.network, file_name);
-		human_v_network(n);
+		while(true)
+			human_v_network(n);
 	}
 	system("PAUSE");
 }
