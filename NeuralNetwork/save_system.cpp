@@ -17,7 +17,7 @@ std::string save_network(Network & network, int generation, int number)
 	std::string file_name = std::to_string(generation) + "_" + std::to_string(number) + "_network.txt";
 	std::ofstream file(file_name);
 	file << std::setprecision(30);
-	for (int layer = 1; layer < network.size() - 1; layer++)
+	for (int layer = 1; layer < network.size(); layer++)
 	{
 		for (int neuron = 0; neuron < network[layer].size(); neuron++)
 		{
@@ -33,6 +33,7 @@ std::string save_network(Network & network, int generation, int number)
 		if (layer < network.size() - 1)
 			file << 'C';
 	}
+	file << 'A';
 	return file_name;
 }
 
