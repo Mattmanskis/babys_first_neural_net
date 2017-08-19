@@ -86,6 +86,34 @@ void load_network(Network & network, std::string file_name)
 	}
 }
 
+void save_all_and_check(std::vector<network_group> &n , int generation)
+{
+	for (int x = 0; x < n.size(); x++)
+	{
+		save_network(n[x].network, generation, x);
+	}
+
+	network_group temp_net;
+	std::string file_name;
+
+	for (int x = 0; x < n.size(); x++)
+	{
+		file_name = std::to_string(generation) + "_" + std::to_string(x) + "_network.txt";
+		load_network(temp_net.network, file_name);
+		for (int layer = 0; layer < temp_net.network.size(); layer++)
+		{
+			for (int neuron = 0; neuron < temp_net.network[layer].size(); neuron++)
+			{
+				for (int connection = 0; connection < temp_net.network[layer][neuron].size(); connection++)
+				{
+					//make sure that all weights are the same in the save file and the network that is being saved.
+					assert(temp_net.network[layer][neuron][connection] == n[x].network[layer][neuron][connection]);
+				}
+			}
+		}
+	}
+}
+
 int load_network_vector(std::vector<network_group> &n)
 {
 	std::string gen_string;
@@ -96,7 +124,7 @@ int load_network_vector(std::vector<network_group> &n)
 	int count = 0;
 	while (not_ended)
 	{
-		not_ended = fileExists(std::to_string(gen_int) + "_" + std::to_string(count) + "_network.txt");
+		not_ended = fileExists(std::to_string(gen_int) + "_" + std::to_string(count) + "_network.txt"); //checks if the file it wants to load exists
 		count++;
 	}
 	n.resize(count*2 - 1); //count = size of the file + 1, multiply by 2 and subtact 1 to get double the network size +1
