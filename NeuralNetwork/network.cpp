@@ -14,7 +14,7 @@ std::vector<float> network_group::output(std::vector<float> input)
 {
 	t_network[0] = input;
 	float val = 0;
-	for (int layer = 1; layer < network.size(); layer++)
+	for (int layer = 1; layer < network.size()-1; layer++)
 	{
 		t_network[layer][0] = network[layer][0][0];
 		for (int neuron = 1; neuron < network[layer].size(); neuron++)
@@ -27,34 +27,31 @@ std::vector<float> network_group::output(std::vector<float> input)
 			val = 0;
 		}
 	}
+	for (int neuron = 0; neuron < network[network.size()-1].size(); neuron++)	//output layer has no bias neurons, and can't be computed in the same loop as others
+	{
+		for (int connection = 0; connection < network[network.size() - 1][neuron].size(); connection++)
+			{
+				val += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
+			}
+			t_network[network.size() - 1][neuron] = 1 / (1 + exp(-.4*val));
+			val = 0;
+	}
 	return(t_network[t_network.size() - 1]);
 }
 
-void network_group::backprop(std::vector<float> input, std::vector<float> output, float training_weight)
+void network_group::backprop(std::vector<float> input, std::vector<float> e_output, float training_weight)
 {
-	t_network[0] = input;
-	float val = 0; 
-	for (int layer = 1; layer < network.size(); layer++)
-	{
-		t_network[layer][0] = network[layer][0][0];
-		for (int neuron = 1; neuron < network[layer].size(); neuron++)
-		{
-			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
-			{
-				val += network[layer][neuron][connection] * t_network[layer - 1][connection];
-			}
-			t_network[layer][neuron] = 1 / (1 + exp(-.4*val));
-			val = 0;
-		}
-	}
+	auto net_output = output(input);
 
 	//finds error based on expected output and saves it in the last layer of error net
-	for (int x = 0; x < output.size(); x++)
+	for (int x = 0; x < e_output.size(); x++)
 	{
-		error_net[network_specs[0]-1][x][0] = output[x] - t_network[network_specs[0] - 1][x];
+		error_net[network_specs[0]-1][x][0] = e_output[x] - net_output[x];
 	}
 
-	for (int layer = network_specs[0] -1; layer > 0; layer--)
+	float val = 0;
+
+	for (int layer = network_specs[0] -2; layer > 0; layer--)
 	{
 		for (int neuron = 0; neuron < network[layer].size(); neuron++)
 		{
@@ -89,18 +86,18 @@ void network_group::set_network_size(Network & network, std::vector<int> specs)
 void network_group::set_t_network_size(T_Network & network, std::vector<int> specs)
 {
 	network.resize(specs[0]); // 5 layers
-	for (int x = 1; x < specs.size(); x++)
+	for (int x = 0; x < specs.size()-1; x++)
 	{
-		network[x].resize(specs[x]);
+		network[x].resize(specs[x+1]);
 	}
 }
 
 void network_group::set_error_network_size(Network & network, std::vector<int> specs)
 {
 	network.resize(specs[0]); // 5 layers
-	for (int x = 1; x < specs.size(); x++)
+	for (int x = 0; x < specs.size()-1; x++)
 	{
-		network[x].resize(specs[x]);
+		network[x].resize(specs[x+1]);
 	}
 	for (int layer = 1; layer < network.size(); layer++)
 	{
