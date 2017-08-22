@@ -25,7 +25,7 @@ struct network_group
 
 	std::vector<float> output(std::vector<float> input);
 
-	void network_group::backprop(std::vector<float> input, std::vector<float> output, float training_rate);
+	void backprop(std::vector<float> input, std::vector<float> output, float training_rate);
 
 	//vector should have number of layers as first number (including input and output layers) and number of neurons per layer for all numbers after that
 	void set_network_size(Network & network, std::vector<int> specs);

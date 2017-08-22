@@ -36,6 +36,9 @@
     <ClInclude Include="tick_tack_toe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="back_prop_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

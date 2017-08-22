@@ -10,9 +10,11 @@
 #include <iostream>
 #include <algorithm>
 #include <time.h>
+#include "back_prop_test.h"
 
 int main()
 {
+	test();
 	std::string option;
 	bool valid = false;
 	while (!valid)
