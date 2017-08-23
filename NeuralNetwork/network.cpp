@@ -86,6 +86,18 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 		{
 			error_net[network_specs[0] - 2][neuron][error] = error_net[network_specs[0] - 1][error][0] * network[network_specs[0]-1][error][neuron];
 		}
+		for (int layer = network_specs[0] - 3; layer > 0; layer--)
+		{
+			for (int neuron = 0; neuron < network[layer].size(); neuron++)
+			{
+				for (int connection = 1; connection < network[layer + 1].size(); connection++)
+				{
+					val += error_net[layer + 1][connection][error] * network[layer + 1][connection][neuron];
+				}
+				error_net[layer][neuron][error] = val;
+				val = 0;
+			}
+		}
 	}
 
 	for (int error = 0; error < network_specs[network_specs.size() - 1]; error++)
@@ -123,6 +135,7 @@ void network_group::set_network_size(Network & network, std::vector<int> specs)
 			network[layer][neuron].resize(network[layer - 1].size()); //resize neuron to hold connection weights to previous layer
 		}
 	}
+	network[specs[0] - 1][0].resize(network[specs[0] - 2].size()); //the first output neuron shouldn't be a bias neuron
 }
 
 void network_group::set_t_network_size(T_Network & network, std::vector<int> specs)
