@@ -79,22 +79,12 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 	}
 
 	val = 0;
-	for (int error = 0; error < network_specs[network_specs.size() - 1]; error++) //while error is less than the number of outputs -1
+
+	for(int error = 0; error < network_specs[network_specs.size() - 1]; error ++)
 	{
-		if (error_net[network_specs[0] - 1][error][0] != 0) //if error is not 0
+		for (int neuron = 1; neuron < network[network_specs[0] - 2].size(); neuron++) //gets the error of the last hidden layer based on calculated error
 		{
-			for (int layer = network_specs[0] - 2; layer > 0; layer--)
-			{
-				for (int neuron = 0; neuron < network[layer].size(); neuron++)
-				{
-					for (int connection = 0; connection < network[layer-1].size(); connection++)
-					{
-						val += network[layer-1][connection][neuron] * error_net[layer + 1][neuron][error];
-					}
-					error_net[layer][neuron][error] = val;
-					val = 0;	
-				}
-			}
+			error_net[network_specs[0] - 2][neuron][error] = error_net[network_specs[0] - 1][error][0] * network[network_specs[0]-1][error][neuron];
 		}
 	}
 
