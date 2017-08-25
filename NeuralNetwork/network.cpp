@@ -111,7 +111,7 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 					for (int connection = 0; connection < network[layer][neuron].size(); connection++)
 					{
 						float x = t_network[layer - 1][connection];
-						network[layer][neuron][connection] += training_weight*error_net[layer][neuron][error] * -exp(-x) * (1 / ((1 + exp(-x))*(1 + exp(-x))));
+						network[layer][neuron][connection] += training_weight* error_net[layer][neuron][error] * -exp(-x) * (1 / ((1 + exp(-x))*(1 + exp(-x))));
 					}
 				}
 			}
