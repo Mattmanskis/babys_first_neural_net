@@ -57,16 +57,16 @@ void print_output(std::vector<float> output);
 void test()
 {
 	network_group test_net;
-	//trains net 100 times, with data and output
-	for (int x = 0; x < 100; x++)
+	//trains net 1000 times, with data and output
+	for (int x = 1; x <= 1000; x++)
 	{
-		test_net.backprop(test_0, output_0, x / 100);
-		test_net.backprop(test_1, output_1, x / 100);
-		test_net.backprop(test_2, output_2, x / 100);
-		test_net.backprop(test_3, output_3, x / 100);
-		test_net.backprop(test_4, output_4, x / 100);
-		test_net.backprop(test_5, output_5, x / 100);
-		test_net.backprop(test_6, output_6, x / 100);
+		test_net.backprop(test_0, output_0, 1 / x);
+		test_net.backprop(test_1, output_1, 1 / x);
+		test_net.backprop(test_2, output_2, 1/ x);
+		test_net.backprop(test_3, output_3, 1 / x);
+		test_net.backprop(test_4, output_4, 1 / x);
+		test_net.backprop(test_5, output_5, 1 / x);
+		test_net.backprop(test_6, output_6, 1 / x);
 	}
 	std::cout << "test 0 \n \n";
 	print_output(test_net.output(test_0));
