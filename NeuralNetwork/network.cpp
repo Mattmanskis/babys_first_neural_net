@@ -13,28 +13,27 @@ std::uniform_int_distribution<int> random_int_0_8(0, 8);
 std::vector<float> network_group::output(std::vector<float> input)
 {
 	t_network[0] = input;
-	float val = 0;
-	for (int layer = 1; layer < network.size()-2; layer++)
+	for (int layer = 1; layer < network.size(); layer++)
 	{
 		t_network[layer][0] = network[layer][0][0];
 		for (int neuron = 1; neuron < network[layer].size(); neuron++)
 		{
+			t_network[layer][neuron] = 0;
 			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
 			{
-				val += network[layer][neuron][connection] * t_network[layer-1][connection];
+				t_network[layer][neuron] += network[layer][neuron][connection] * t_network[layer-1][connection];
 			}
-			t_network[layer][neuron] = 1 / (1 + exp(val));
-			val = 0;
+			t_network[layer][neuron] = 1 / (1 + exp(-t_network[layer][neuron]));
 		}
 	}
 	for (int neuron = 0; neuron < network[network.size()-1].size(); neuron++)	//output layer has no bias neurons, and can't be computed in the same loop as others
 	{
+		t_network[network.size()-1][neuron] = 0;
 		for (int connection = 0; connection < network[network.size() - 1][neuron].size(); connection++)
-			{
-				val += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
-			}
-			t_network[network.size() - 1][neuron] = 1 / (1 + exp(-val));
-			val = 0;
+		{
+			t_network[network.size() - 1][neuron] += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
+		}
+		t_network[network.size() - 1][neuron] = 1 / (1 + exp(-t_network[network.size() - 1][neuron]));
 	}
 	return(t_network[t_network.size() - 1]);
 }
@@ -43,30 +42,28 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 {
 	//first runs net through normally for output
 	t_network[0] = input;
-	float val = 0;
-	for (int layer = 1; layer < network.size() - 1; layer++)
+	for (int layer = 1; layer < network.size(); layer++)
 	{
 		t_network[layer][0] = network[layer][0][0];
 		for (int neuron = 1; neuron < network[layer].size(); neuron++)
 		{
+			t_network[layer][neuron] = 0;
 			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
 			{
-				val += network[layer][neuron][connection] * t_network[layer - 1][connection];
+				t_network[layer][neuron] += network[layer][neuron][connection] * t_network[layer - 1][connection];
 			}
-			t_network[layer][neuron] = 1 / (1 + exp(val));
-			val = 0;
+			t_network[layer][neuron] = 1 / (1 + exp(-t_network[layer][neuron]));
 		}
 	}
 	for (int neuron = 0; neuron < network[network.size() - 1].size(); neuron++)	//output layer has no bias neurons, and can't be computed in the same loop as others
 	{
+		t_network[network.size() - 1][neuron] = 0;
 		for (int connection = 0; connection < network[network.size() - 1][neuron].size(); connection++)
 		{
-			val += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
+			t_network[network.size() - 1][neuron] += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
 		}
-		t_network[network.size() - 1][neuron] = 1 / (1 + exp(-.4*val));
-		val = 0;
+		t_network[network.size() - 1][neuron] = 1 / (1 + exp(-t_network[network.size() - 1][neuron]));
 	}
-
 	//finds error based on expected output and saves it in the last layer of error net
 	for (int x = 0; x < e_output.size()-1; x++)
 	{
@@ -78,7 +75,7 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 			error_net[network_specs[0]-1][x][0] = 0;
 	}
 
-	val = 0;
+	int val = 0;
 
 	for(int error = 0; error < network_specs[network_specs.size() - 1]; error ++)
 	{
