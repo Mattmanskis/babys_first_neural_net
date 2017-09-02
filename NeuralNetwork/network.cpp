@@ -10,6 +10,16 @@ std::uniform_real_distribution<float> random_0_1(0.0f, 1.0f);
 std::uniform_real_distribution<float> random_5_5(-.5f, .5f);
 std::uniform_int_distribution<int> random_int_0_8(0, 8);
 
+float activation(float x)
+{
+	return 2 / (1 + exp(-2 * x)) -1;
+}
+
+float d_activation(float x)
+{
+	return 1 - activation(x) * activation(x);
+}
+
 std::vector<float> network_group::output(std::vector<float> input)
 {
 	t_network[0] = input;
@@ -23,7 +33,7 @@ std::vector<float> network_group::output(std::vector<float> input)
 			{
 				t_network[layer][neuron] += network[layer][neuron][connection] * t_network[layer-1][connection];
 			}
-			t_network[layer][neuron] = 1 / (1 + exp(-t_network[layer][neuron]));
+			t_network[layer][neuron] = activation(t_network[layer][neuron]);
 		}
 	}
 	for (int neuron = 0; neuron < network[network.size()-1].size(); neuron++)	//output layer has no bias neurons, and can't be computed in the same loop as others
@@ -33,87 +43,29 @@ std::vector<float> network_group::output(std::vector<float> input)
 		{
 			t_network[network.size() - 1][neuron] += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
 		}
-		t_network[network.size() - 1][neuron] = 1 / (1 + exp(-t_network[network.size() - 1][neuron]));
+		t_network[network.size() - 1][neuron] = activation(t_network[network.size() - 1][neuron]);
 	}
 	return(t_network[t_network.size() - 1]);
 }
 
 void network_group::backprop(std::vector<float> input, std::vector<float> e_output, float training_weight)
 {
-	//first runs net through normally for output
-	t_network[0] = input;
-	for (int layer = 1; layer < network.size(); layer++)
-	{
-		t_network[layer][0] = network[layer][0][0];
-		for (int neuron = 1; neuron < network[layer].size(); neuron++)
-		{
-			t_network[layer][neuron] = 0;
-			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
-			{
-				t_network[layer][neuron] += network[layer][neuron][connection] * t_network[layer - 1][connection];
-			}
-			t_network[layer][neuron] = 1 / (1 + exp(-t_network[layer][neuron]));
-		}
-	}
-	for (int neuron = 0; neuron < network[network.size() - 1].size(); neuron++)	//output layer has no bias neurons, and can't be computed in the same loop as others
-	{
-		t_network[network.size() - 1][neuron] = 0;
-		for (int connection = 0; connection < network[network.size() - 1][neuron].size(); connection++)
-		{
-			t_network[network.size() - 1][neuron] += network[network.size() - 1][neuron][connection] * t_network[network.size() - 2][connection];
-		}
-		t_network[network.size() - 1][neuron] = 1 / (1 + exp(-t_network[network.size() - 1][neuron]));
-	}
-	//finds error based on expected output and saves it in the last layer of error net
+	//runs network normally to find the activated values of all neurons
+	output(input);
+	//finds delta of the last layer based on expected output and saves it in the last layer of error net
 	for (int x = 0; x < e_output.size()-1; x++)
 	{
-		if (e_output[x] != -1)
-		{
-			error_net[network_specs[0] - 1][x][0] = e_output[x] - t_network[network_specs[0]-1][x];
-		}
-		else
-			error_net[network_specs[0]-1][x][0] = 0;
+		float z = 0;
+		//computes z by adding all activated values of previous layer
+		for (int output = 0; output < network[network_specs[0] - 2].size(); output++)
+			z += t_network[network_specs[0] - 2][output];
+		error_net[network_specs[0] - 1][x] =  (t_network[network_specs[0]-1][x] - e_output[x]) * d_activation(z);
 	}
 
-	int val = 0;
-
-	for(int error = 0; error < network_specs[network_specs.size() - 1]; error ++)
+	//comuptes delta for all layers based on previous layer
+	for (int layer = 0; layer < 0; layer++)
 	{
-		if (error_net[network_specs[0] - 1][error][0] != 0)
-		{
-			for (int neuron = 1; neuron < network[network_specs[0] - 2].size(); neuron++) //gets the error of the last hidden layer based on calculated error
-			{
-				error_net[network_specs[0] - 2][neuron][error] = error_net[network_specs[0] - 1][error][0] * network[network_specs[0] - 1][error][neuron];
-			}
-			for (int layer = network_specs[0] - 3; layer > 0; layer--)
-			{
-				for (int neuron = 0; neuron < network[layer].size(); neuron++)
-				{
-					for (int connection = 1; connection < network[layer + 1].size(); connection++)
-					{
-						val += error_net[layer + 1][connection][error] * network[layer + 1][connection][neuron];
-					}
-					error_net[layer][neuron][error] = val;
-					val = 0;
-				}
-			}
-		}
-	}
-
-
-	for (int error = 0; error < network_specs[network_specs.size() - 1]; error++)
-	{
-		for (int layer = 1; layer < network.size() - 1; layer++)
-		{
-			for (int neuron = 1; neuron < network[layer].size(); neuron++)
-			{
-				for (int connection = 0; connection < network[layer][neuron].size(); connection++)
-				{
-					float x = t_network[layer - 1][connection];
-					network[layer][neuron][connection] += training_weight* error_net[layer][neuron][error] * -exp(-x) * (1 / ((1 + exp(-x))*(1 + exp(-x))));
-				}
-			}
-		}
+		for(int neuron)
 	}
 }
 

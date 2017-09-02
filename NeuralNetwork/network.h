@@ -10,7 +10,7 @@ struct network_group
 
 	T_Network t_network;
 
-	Network error_net;
+	T_Network error_net;
 
 	float fitness = 0;
 
