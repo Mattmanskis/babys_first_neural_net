@@ -34,7 +34,7 @@ struct network_group
 	void set_t_network_size(T_Network & network, std::vector<int> specs);
 
 	//vector should have number of layers as first number (including input and output layers) and number of neurons per layer for all numbers after that
-	void set_error_network_size(Network & network, std::vector<int> specs);
+	void set_error_network_size(T_Network & network, std::vector<int> specs);
 
 	void fill_network(Network &network);
 

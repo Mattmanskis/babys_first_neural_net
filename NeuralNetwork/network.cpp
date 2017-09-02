@@ -63,9 +63,30 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 	}
 
 	//comuptes delta for all layers based on previous layer
-	for (int layer = 0; layer < 0; layer++)
+	for (int layer = network_specs[0]-2; layer > 0; layer++)
 	{
-		for(int neuron)
+		for (int neuron = 1; neuron < network[layer].size(); neuron++)
+		{
+			float blame = 0;
+			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+			{
+				blame += error_net[layer + 1][connection] * network[layer + 1][connection][neuron];
+			}
+			error_net[layer][neuron] = d_activation(blame);
+		}
+	}
+	float blame;
+	//adjusts weights of neurons based on blame
+	for (int layer = 1; layer < network.size(); layer++)
+	{
+		for (int neuron = 1; neuron < network[layer].size(); neuron++)
+		{
+			blame = error_net[layer][neuron];
+			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+			{
+				network[layer][neuron][connection] -= training_weight*blame*t_network[layer - 1][connection];
+			}
+		}
 	}
 }
 
@@ -97,19 +118,12 @@ void network_group::set_t_network_size(T_Network & network, std::vector<int> spe
 	}
 }
 
-void network_group::set_error_network_size(Network & network, std::vector<int> specs)
+void network_group::set_error_network_size(T_Network & network, std::vector<int> specs)
 {
 	network.resize(specs[0]); // 5 layers
 	for (int x = 0; x < specs.size()-1; x++)
 	{
 		network[x].resize(specs[x+1]);
-	}
-	for (int layer = 1; layer < network.size() ; layer++)
-	{
-		for (int neuron = 0; neuron < network[layer].size(); neuron++)
-		{
-			network[layer][neuron].resize(specs[specs.size()-1]); //resize neuron to hold an error value reletive to each output neuron
-		}
 	}
 }
 
