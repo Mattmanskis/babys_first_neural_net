@@ -12,7 +12,7 @@ std::uniform_int_distribution<int> random_int_0_8(0, 8);
 
 float activation(float x)
 {
-	return 2 / (1 + exp(-2 * x)) -1;
+	return (2 / (1 + exp(-2 * x))) -1;
 }
 
 float d_activation(float x)
@@ -53,7 +53,7 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 	//runs network normally to find the activated values of all neurons
 	output(input);
 	//finds delta of the last layer based on expected output and saves it in the last layer of error net
-	for (int x = 0; x < e_output.size()-1; x++)
+	for (int x = 0; x < e_output.size(); x++)
 	{
 		float z = 0;
 		//computes z by adding all activated values of previous layer
@@ -62,19 +62,32 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 		error_net[network_specs[0] - 1][x] =  (t_network[network_specs[0]-1][x] - e_output[x]) * d_activation(z);
 	}
 
-	//comuptes delta for all layers based on previous layer
-	for (int layer = network_specs[0]-2; layer > 0; layer++)
+	//computes error of last hidden layer seperately (output layer has no bias neuron)
+	for (int neuron = 0; neuron < network[network_specs[0]-2].size(); neuron++)
 	{
-		for (int neuron = 1; neuron < network[layer].size(); neuron++)
+		float blame = 0;	
+		for (int connection = 0; connection < network[network_specs[0] - 1].size(); connection++)
+		{
+			blame += error_net[network_specs[0] - 1][connection] * network[network_specs[0] - 1][connection][neuron];
+		}	
+		error_net[network_specs[0] - 2][neuron] = d_activation(blame);
+	}
+	
+
+	//comuptes delta for all other layers based on previous layer
+	for (int layer = network_specs[0]-3; layer > 0; layer--)
+	{
+		for (int neuron = 0; neuron < network[layer].size(); neuron++)
 		{
 			float blame = 0;
-			for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+			for (int connection = 1; connection < network[layer + 1].size(); connection++)
 			{
 				blame += error_net[layer + 1][connection] * network[layer + 1][connection][neuron];
 			}
 			error_net[layer][neuron] = d_activation(blame);
 		}
 	}
+
 	float blame;
 	//adjusts weights of neurons based on blame
 	for (int layer = 1; layer < network.size(); layer++)
