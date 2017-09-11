@@ -54,12 +54,21 @@ std::vector<float> unknown_3 = { 1,0,1,0,0,0,1,0,1 };
 
 void print_output(std::vector<float> output);
 
+void print_diff(std::vector<float> first, std::vector<float> second);
+
 void test()
 {
 	network_group test_net;
+	auto out1 = test_net.output(test_5);
+	auto out2 = test_net.output(test_6);
+	for (int x = 0; x < out1.size(); x++)
+	{
+		_ASSERT(out1[x] != out2);
+	}
 	//trains net 1000 times, with data and output
 	for (int x = 1; x <= 1000; x++)
 	{
+		print_diff(test_net.output(test_5), test_net.output(test_6));
 		test_net.backprop(test_0, output_0, 1 / x);
 		test_net.backprop(test_1, output_1, 1 / x);
 		test_net.backprop(test_2, output_2, 1/ x);
@@ -98,4 +107,15 @@ void print_output(std::vector<float> output)
 	}
 	std::cout << '\n';
 }
+
+void print_diff(std::vector<float> first, std::vector<float> second)
+{
+	float total = 0;
+	for (int x = 0; x < first.size(); x++)
+	{
+		total += abs(first[x] - second[x]);
+	}
+	std::cout << "avarage differance = " << total / first.size() << '\n';
+}
+
 
