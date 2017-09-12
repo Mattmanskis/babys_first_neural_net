@@ -14,11 +14,12 @@ struct network_group
 
 	float fitness = 0;
 
-	std::vector<int> network_specs = { 5,9,61,61,61,9 };
+	std::vector<int> network_specs = { 3,9,21,9 };
 	network_group()
 	{
 		set_network_size(network,network_specs);
 		fill_network(network);
+		//fill_determin(network);
 		set_t_network_size(t_network,network_specs);
 		set_error_network_size(error_net, network_specs);
 	};
@@ -37,6 +38,8 @@ struct network_group
 	void set_error_network_size(T_Network & network, std::vector<int> specs);
 
 	void fill_network(Network &network);
+
+	void fill_determin(Network &network);
 
 	void modify_vector(Network & net_1, float mutation_chance);
 

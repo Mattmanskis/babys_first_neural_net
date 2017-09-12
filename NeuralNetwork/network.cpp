@@ -168,6 +168,32 @@ void network_group::fill_network(Network & network)
 	}
 }
 
+{
+	float val = .1;
+	{
+		if (layer != network.size() - 1)
+		{
+			network[layer][0][0] = random_5_5(rng);
+			for (int neuron = 1; neuron < network[layer].size(); neuron++)
+			{
+				for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+				}
+			}
+		}
+		else
+		{
+			for (int neuron = 0; neuron < network[layer].size(); neuron++)
+			{
+				for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+				{
+					network[layer][neuron][connection] = val;
+				}
+			}
+		}
+		val += .1;
+	}
+}
+
 void network_group::modify_vector(Network & net_1, float mutation_chance)
 {
 	network = net_1;

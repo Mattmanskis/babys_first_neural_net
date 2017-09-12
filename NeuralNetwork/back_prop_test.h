@@ -56,9 +56,14 @@ void print_output(std::vector<float> output);
 
 void print_diff(std::vector<float> first, std::vector<float> second);
 
+void print_net_diff(Network& first, Network& second);
+
 void test()
 {
 	network_group test_net;
+	Network temp;
+	temp = test_net.network;
+
 	auto out1 = test_net.output(test_5);
 	auto out2 = test_net.output(test_6);
 	for (int x = 0; x < out1.size(); x++)
@@ -66,16 +71,13 @@ void test()
 		_ASSERT(out1[x] != out2);
 	}
 	//trains net 1000 times, with data and output
-	for (int x = 1; x <= 1000; x++)
+	float training_speed = .0001;
+	while (true)
 	{
-		print_diff(test_net.output(test_5), test_net.output(test_6));
-		test_net.backprop(test_0, output_0, 1 / x);
-		test_net.backprop(test_1, output_1, 1 / x);
-		test_net.backprop(test_2, output_2, 1/ x);
-		test_net.backprop(test_3, output_3, 1 / x);
-		test_net.backprop(test_4, output_4, 1 / x);
-		test_net.backprop(test_5, output_5, 1 / x);
-		test_net.backprop(test_6, output_6, 1 / x);
+		print_diff(test_net.output(output_0), output_0);
+		test_net.backprop(output_0, output_0, training_speed);
+		//print_output(test_net.output(test_0));
+		//print_net_diff(temp, test_net.network);
 	}
 	std::cout << "test 0 \n \n";
 	print_output(test_net.output(test_0));
@@ -115,7 +117,32 @@ void print_diff(std::vector<float> first, std::vector<float> second)
 	{
 		total += abs(first[x] - second[x]);
 	}
-	std::cout << "avarage differance = " << total / first.size() << '\n';
+	std::cout << total / first.size() <<std::endl;
 }
 
+float sum_net(Network& net);
+
+void print_net_diff(Network& first, Network& second)
+{
+	float total_first = sum_net(first);
+	float total_second = sum_net(second);
+	std::cout << "Net total = " << total_second << std::endl << "preious total = " <<total_first <<std::endl << "difference  = " << total_second - total_first << std::endl <<std::endl;
+	first = second;
+}
+
+float sum_net(Network& net)
+{
+	float sum = 0;
+	for (int layer = 0; layer < net.size(); layer++)
+	{
+		for (int neuron = 0; neuron < net[layer].size(); neuron++)
+		{
+			for (int connection = 0; connection < net[layer][neuron].size(); connection++)
+			{
+				sum += net[layer][neuron][connection];
+			}
+		}
+	}
+	return sum;
+}
 
