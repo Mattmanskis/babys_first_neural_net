@@ -103,6 +103,39 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 	}
 }
 
+void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_out)
+{
+	fitness = 1;
+	for (int x = 0; x < e_out.size(); x++)
+	{
+		fitness -= abs(e_out[x] - n_out[x]);
+	}
+}
+
+void network_group::focus_train(std::vector<float> input, std::vector<float> output, float training_rate)
+{
+	int count = 0;
+	network_group backup;
+	backup.network = network;
+	bool min = false;
+	float current_fitness = 0;
+	while (!min)
+	{
+		for (int x = 0; x < 5; x++)
+		{
+			backprop(input, output, training_rate);
+		}
+		get_fitness(this->output(input), output);
+		backup.get_fitness(backup.output(input),output);
+		if (fitness > backup.fitness)
+			backup.network = network;
+		else
+			min = true;
+		count++;
+	}
+	count = fitness;
+}
+
 void network_group::set_network_size(Network & network, std::vector<int> specs)
 {
 	network.resize(specs[0]); // 5 layers
@@ -168,8 +201,10 @@ void network_group::fill_network(Network & network)
 	}
 }
 
+void network_group::fill_determin(Network & network)
 {
 	float val = .1;
+	for (int layer = 1; layer < network.size(); layer++)
 	{
 		if (layer != network.size() - 1)
 		{
@@ -177,6 +212,8 @@ void network_group::fill_network(Network & network)
 			for (int neuron = 1; neuron < network[layer].size(); neuron++)
 			{
 				for (int connection = 0; connection < network[layer][neuron].size(); connection++)
+				{
+					network[layer][neuron][connection] = val;
 				}
 			}
 		}

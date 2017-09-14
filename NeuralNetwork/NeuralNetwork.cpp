@@ -14,7 +14,7 @@
 
 int main()
 {
-	test();
+	//test();
 	std::string option;
 	bool valid = false;
 	while (!valid)
@@ -114,6 +114,7 @@ int main()
 			{
 				for (int x = 0; x < network_v.size(); x++)
 				{
+					ai_v_ai(network_v[x]);
 					ai_v_network(network_v[x], true); //plays ai with both first and second move
 					ai_v_network(network_v[x], false);
 					// divide fitness by 2 games to get avarage fitness
@@ -173,10 +174,10 @@ int main()
 					}
 				}
 			}
-
+			/*
 			// mutation chance  = f(x)/f(x)^2 for f(x) = time runing / (max_possible_fitness - current_highest_fitness) + 2
-			mutation_chance = 100 * (abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2) / ((abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2) *  (abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2));
-			 //top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
+			//mutation_chance = 100 * (abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2) / ((abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2) *  (abs(difftime(now, start_time) + start_time_o) / (501 - network_v[0].fitness) + 2));
+			//top 50% of vectors are coppied into bottom 50% of vectors, then slightly changed
 			for (int x = 30; x < 45 ; x++)
 			{
 				network_v[x].modify_vector(network_v[0].network, mutation_chance);
@@ -191,6 +192,7 @@ int main()
 			}
 			network_v[88].modify_vector(network_v[2].network, mutation_chance);
 			network_v[89].modify_vector(network_v[3].network, mutation_chance);
+			*/
 			now = time(NULL);
 			if (abs(difftime(now, save_timer)) > std::stoi(save_time)) //saves all networks every save_time seconds
 			{

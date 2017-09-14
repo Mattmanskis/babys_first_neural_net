@@ -123,6 +123,47 @@ int ai_decision(std::vector<float> game)
 	return search_game(game, 0, 0);
 }
 
+void ai_v_ai(network_group& net)
+{
+	std::vector<float> ai_out;
+	std::vector<float> game;
+	game.resize(9);
+	ai_out.resize(9);
+	int ai_turns = 0;
+	for (int x = 0; x < 9; x++) //set all squares to empty
+	{
+		game[x] = 0;
+	}
+	for (int x = 0; x < 9; x++)
+	{
+		int decision;
+		decision = ai_decision(game);
+		if (game[decision] != 0)
+		{
+				std::cout << "ai bad move \n";
+		}
+		else
+		{
+			for (int x = 0; x < 9; x++)
+			{
+				if (x == decision)
+					ai_out[x] = 1;
+				else
+					ai_out[x] = 0;
+			}
+			net.backprop(game, ai_out, .001);
+			game[decision] = 1;
+			if (check_win(game))
+			{
+
+				net.focus_train(game, ai_out, .001);
+				return;
+			}
+		}
+		flip_vec(game);
+	}
+}
+
 void ai_v_network(network_group & net_1,bool goes_first)
 {
 	std::vector<float> game;
@@ -179,28 +220,31 @@ void ai_v_network(network_group & net_1,bool goes_first)
 
 void network_v_network(network_group & net_1, network_group & net_2)
 {
-	std::vector<float> game;
-	game.resize(9);
+	std::vector<std::vector<float>> game_moves;
+	game_moves.resize(10);
+	for (int x = 0; x < game_moves.size(); x++)
+		game_moves[x].resize(9);
 	int net_1_moves = 0;
 	int net_2_moves = 0;
-	for (int x = 0; x < 9; x++) //set all squares to empty
+	for (int x = 0; x < 10; x++) //set all squares to empty
 	{
-		game[x] = 0;
+		for (int y = 0; y < 9; y++ )
+			game_moves[x][y] = 0;
 	}
-	for (int x = 0; x < 9; x++)
+	for (int x = 1; x < 10; x++)
 	{
 		int decision;
 		if (x % 2 == 0) //if even net_1 goes
 		{
-			decision = interpret(net_1.output(game));
+			decision = interpret(net_1.output(game_moves[x-1]));
 			net_1_moves++;
 		}
 		else //else net_2 goes
 		{
-			decision = interpret(net_2.output(game));
+			decision = interpret(net_2.output(game_moves[x-1]));
 			net_2_moves++;
 		}
-		if (game[decision] != 0)
+		if (game_moves[decision] != 0)
 		{
 			if (x % 2 == 0) //loses significant amounts of fitness for playing on filled squares
 			{
@@ -235,7 +279,7 @@ void network_v_network(network_group & net_1, network_group & net_2)
 				return;
 			}
 		}
-		flip_vec(game);
+		flip_vec(game_moves[x]);
 	}
 }
 

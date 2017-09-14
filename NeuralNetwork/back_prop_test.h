@@ -3,6 +3,7 @@
 #include "network.h"
 #include <iostream>
 #include <string>
+#include <time.h>
 /*
 test to see if my back propagation works, I want it to train it to recognise the following
 100
@@ -68,17 +69,29 @@ void test()
 	auto out2 = test_net.output(test_6);
 	for (int x = 0; x < out1.size(); x++)
 	{
-		_ASSERT(out1[x] != out2);
+		_ASSERT(out1[x] != out2[x]);
 	}
 	//trains net 1000 times, with data and output
 	float training_speed = .0001;
-	while (true)
+	print_diff(test_net.output(test_0), output_0);
+	print_diff(test_net.output(test_1), output_1);
+	print_diff(test_net.output(test_2), output_2);
+	print_diff(test_net.output(test_3), output_3);
+	std::cout << '\n';
+	//print_net_diff(temp, test_net.network);
+	for (int x = 0; x < 10; x++)
 	{
-		print_diff(test_net.output(output_0), output_0);
-		test_net.backprop(output_0, output_0, training_speed);
-		//print_output(test_net.output(test_0));
-		//print_net_diff(temp, test_net.network);
+		test_net.focus_train(test_0, output_0, training_speed);
+		test_net.focus_train(test_1, output_1, training_speed);
+		test_net.focus_train(test_2, output_2, training_speed);
+		test_net.focus_train(test_3, output_3, training_speed);
 	}
+	//print_output(test_net.output(test_0));
+	print_diff(test_net.output(test_0), output_0);
+	print_diff(test_net.output(test_1), output_1);
+	print_diff(test_net.output(test_2), output_2);
+	print_diff(test_net.output(test_3), output_3);
+	/*
 	std::cout << "test 0 \n \n";
 	print_output(test_net.output(test_0));
 	std::cout << "test 1 \n \n";
@@ -99,6 +112,7 @@ void test()
 	print_output(test_net.output(unknown_2));
 	std::cout << "unknown 3 \n \n";
 	print_output(test_net.output(unknown_3));
+	*/
 }
 
 void print_output(std::vector<float> output)
@@ -120,26 +134,32 @@ void print_diff(std::vector<float> first, std::vector<float> second)
 	std::cout << total / first.size() <<std::endl;
 }
 
-float sum_net(Network& net);
+std::vector<float> sum_net(Network& net);
 
 void print_net_diff(Network& first, Network& second)
 {
-	float total_first = sum_net(first);
-	float total_second = sum_net(second);
-	std::cout << "Net total = " << total_second << std::endl << "preious total = " <<total_first <<std::endl << "difference  = " << total_second - total_first << std::endl <<std::endl;
+	std::vector<float> total_first = sum_net(first);
+	std::vector<float> total_second = sum_net(second);
+	for (int x = 0; x < total_first.size(); x++)
+	{
+		total_first[x] -= total_second[x];
+	}
+	print_output(total_first);
 	first = second;
 }
 
-float sum_net(Network& net)
+std::vector <float> sum_net(Network& net)
 {
-	float sum = 0;
+	std::vector <float> sum;
+	sum.resize(net.size());
 	for (int layer = 0; layer < net.size(); layer++)
 	{
+		sum[layer] = 0;
 		for (int neuron = 0; neuron < net[layer].size(); neuron++)
 		{
 			for (int connection = 0; connection < net[layer][neuron].size(); connection++)
 			{
-				sum += net[layer][neuron][connection];
+				sum[layer] += net[layer][neuron][connection];
 			}
 		}
 	}
