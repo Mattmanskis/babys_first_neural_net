@@ -59,7 +59,11 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 		//computes z by adding all activated values of previous layer
 		for (int output = 0; output < network[network_specs[0] - 2].size(); output++)
 			z += t_network[network_specs[0] - 2][output];
-		error_net[network_specs[0] - 1][x] =  (t_network[network_specs[0]-1][x] - e_output[x]) * d_activation(z);
+		//if -2 is passed as expected output, that means that there is no expected error so any output has an error of 0 for that neuron
+		if (e_output[x] != -2)
+			error_net[network_specs[0] - 1][x] = (t_network[network_specs[0] - 1][x] - e_output[x]) * d_activation(z);
+		else
+			error_net[network_specs[0] - 1][x] = 0;
 	}
 
 	//computes error of last hidden layer seperately (output layer has no bias neuron)
@@ -133,7 +137,6 @@ void network_group::focus_train(std::vector<float> input, std::vector<float> out
 			min = true;
 		count++;
 	}
-	count = fitness;
 }
 
 void network_group::set_network_size(Network & network, std::vector<int> specs)

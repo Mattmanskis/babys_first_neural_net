@@ -14,7 +14,7 @@ struct network_group
 
 	float fitness = 0;
 
-	std::vector<int> network_specs = { 3,9,21,9 };
+	std::vector<int> network_specs = { 3,9,61,9 };
 	network_group()
 	{
 		set_network_size(network,network_specs);

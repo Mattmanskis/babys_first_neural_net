@@ -96,7 +96,7 @@ int main()
 		}
 		else
 		{
-			network_v.resize(90);
+			network_v.resize(2);
 		}
 
 
@@ -128,6 +128,7 @@ int main()
 					for (int y = 0; y < network_v.size(); y++)
 					{
 						network_v_network(network_v[x], network_v[y]);
+						network_v_network(network_v[y], network_v[x]);
 					}
 				}
 				for (int x = 0; x < network_v.size(); x++)
@@ -205,7 +206,7 @@ int main()
 			if (abs(difftime(now, cout_timer)) > std::stoi(output_time)) //outputs fitness of last generation every 60 seconds
 			{
 				std::cout << "generation " << gen_count << '\n';
-				for (int x = 1; x < network_v.size(); x++)
+				for (int x = 0; x < network_v.size(); x++)
 				{
 					std::cout << "fitness :" << network_v[x].fitness << '\n';
 				}

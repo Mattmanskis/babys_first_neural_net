@@ -91,8 +91,7 @@ int ai_decision(std::vector<float> game)
 {
 	int val; 
 	if (search_game(game, -1, 0) == search_game(game, 1, 0)) //if there are no plays on the board
-		return get_random_8_0();
-	else
+		return 0;
 	{
 		int piece_count=0;
 		int line_count=0;
@@ -151,7 +150,7 @@ void ai_v_ai(network_group& net)
 				else
 					ai_out[x] = 0;
 			}
-			net.backprop(game, ai_out, .001);
+			net.focus_train(game, ai_out, .001);
 			game[decision] = 1;
 			if (check_win(game))
 			{
@@ -190,11 +189,7 @@ void ai_v_network(network_group & net_1,bool goes_first)
 		}
 		if (game[decision] != 0)
 		{
-			if ((x + offset) % 2 == 0)
-			{
-				net_1.fitness -= 50;
-			}
-			else
+			if ((x + offset) % 2 != 0)
 				std::cout << "ai bad move \n";
 		}
 		else
@@ -218,14 +213,31 @@ void ai_v_network(network_group & net_1,bool goes_first)
 	}
 }
 
+void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::vector<float>> game_moves)
+{
+	int offset = 1;
+	int end = game_moves[0][0];
+	if (game_moves[0][0] == 1)
+	{
+		game_moves[0][0] = 0;
+	}
+	else
+	{
+		offset = 2;
+	}
+	for (int x = offset; x <= end; x += 2)
+	{
+		net_1->focus_train(game_moves[x - 1], game_moves[x], .001);
+		net_2->focus_train(game_moves[x - 1], game_moves[x], .001);
+	}
+}
+
 void network_v_network(network_group & net_1, network_group & net_2)
 {
 	std::vector<std::vector<float>> game_moves;
 	game_moves.resize(10);
 	for (int x = 0; x < game_moves.size(); x++)
 		game_moves[x].resize(9);
-	int net_1_moves = 0;
-	int net_2_moves = 0;
 	for (int x = 0; x < 10; x++) //set all squares to empty
 	{
 		for (int y = 0; y < 9; y++ )
@@ -234,48 +246,46 @@ void network_v_network(network_group & net_1, network_group & net_2)
 	for (int x = 1; x < 10; x++)
 	{
 		int decision;
-		if (x % 2 == 0) //if even net_1 goes
+		if (x % 1 == 0) //if odd net_1 goes
 		{
 			decision = interpret(net_1.output(game_moves[x-1]));
-			net_1_moves++;
 		}
 		else //else net_2 goes
 		{
 			decision = interpret(net_2.output(game_moves[x-1]));
-			net_2_moves++;
 		}
-		if (game_moves[decision] != 0)
+		game_moves[x] = game_moves[x - 1];
+		if (game_moves[x][decision] != 0)
 		{
-			if (x % 2 == 0) //loses significant amounts of fitness for playing on filled squares
+			std::vector<float> b_vec;
+			b_vec.resize(9);
+			for (int y = 0; y < 9; y++)
 			{
-				net_1.fitness -= 50;
+				//-2 is the symbol for unknown error
+				b_vec[y] = -2;
 			}
+			b_vec[decision] = 0;
+
+			if (x % 1 == 0)
+				net_1.focus_train(game_moves[x - 1], b_vec, .001);
 			else
-			{
-				net_2.fitness -= 50;
-			}
+				net_2.focus_train(game_moves[x - 1], b_vec, .001);
 		}
 		else
 		{
-			if (x % 2 == 0) //nets do gain some fitness for playing on open squares
+			game_moves[x][decision] = 1;
+			if (check_win(game_moves[x]))
 			{
-				net_1.fitness += 10;
-			}
-			else
-			{
-				net_2.fitness += 10;
-			}
-			game[decision] = 1;
-			if (check_win(game))
-			{
-				if (x % 2 == 0)
+				if (x % 1 == 0)
 				{
-					net_1.fitness += 500 - net_1_moves * 10;
+					net_1.fitness += 500;
 				}
 				else
 				{
-					net_1.fitness += 500 - net_1_moves * 10;
+					net_2.fitness += 500;
 				}
+				game_moves[0][0] = x;
+				backprop_game(&net_1 , &net_2, game_moves);
 				return;
 			}
 		}
