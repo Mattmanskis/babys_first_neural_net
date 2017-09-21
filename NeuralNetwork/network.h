@@ -28,7 +28,7 @@ struct network_group
 
 	void backprop(std::vector<float> input, std::vector<float> output, float training_rate);
 
-	void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_out);
+	void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_out, float &current_fitness);
 
 	void focus_train(std::vector<float> input, std::vector<float> output, float training_rate);
 	//vector should have number of layers as first number (including input and output layers) and number of neurons per layer for all numbers after that

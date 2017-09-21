@@ -96,7 +96,7 @@ int main()
 		}
 		else
 		{
-			network_v.resize(2);
+			network_v.resize(5);
 		}
 
 
@@ -168,10 +168,7 @@ int main()
 				{
 					if (gen_count > 30)
 					{
-						for (int x = 0; x < network_v.size() / 2; x++)
-						{
-							save_network(network_v[x].network, max_fitness_gen, x);
-						}
+						save_all_and_check(network_v,gen_count);
 					}
 				}
 			}
@@ -197,10 +194,7 @@ int main()
 			now = time(NULL);
 			if (abs(difftime(now, save_timer)) > std::stoi(save_time)) //saves all networks every save_time seconds
 			{
-				for (int x = 0; x < network_v.size()/2; x++)
-				{
-					save_network(network_v[x].network, gen_count, x);
-				}
+				save_all_and_check(network_v, gen_count);
 				save_timer = time(NULL);
 			}
 			if (abs(difftime(now, cout_timer)) > std::stoi(output_time)) //outputs fitness of last generation every 60 seconds
