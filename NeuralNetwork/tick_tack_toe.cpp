@@ -91,7 +91,7 @@ int ai_decision(std::vector<float> game)
 {
 	int val; 
 	if (search_game(game, -1, 0) == search_game(game, 1, 0)) //if there are no plays on the board
-		return 0;
+		return get_random_8_0();
 	{
 		int piece_count=0;
 		int line_count=0;
@@ -122,44 +122,42 @@ int ai_decision(std::vector<float> game)
 	return search_game(game, 0, 0);
 }
 
+void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::vector<float>> game_moves);
+
 void ai_v_ai(network_group& net)
 {
 	std::vector<float> ai_out;
-	std::vector<float> game;
-	game.resize(9);
+	std::vector<std::vector<float>> game;
+	game.resize(10);
 	ai_out.resize(9);
 	int ai_turns = 0;
-	for (int x = 0; x < 9; x++) //set all squares to empty
+	for (int y = 0; y < 10; y++)
 	{
-		game[x] = 0;
+		game[y].resize(9);
+		for (int x = 0; x < 9; x++) //set all squares to empty
+		{
+			game[y][x] = 0;
+		}
 	}
-	for (int x = 0; x < 9; x++)
+	for (int x = 1; x < 10; x++)
 	{
 		int decision;
-		decision = ai_decision(game);
-		if (game[decision] != 0)
+		decision = ai_decision(game[x-1]);
+		game[x] = game[x - 1];
+		if (game[x][decision] != 0)
 		{
 				std::cout << "ai bad move \n";
 		}
 		else
 		{
-			for (int x = 0; x < 9; x++)
+			game[x][decision] = 1;
+			if (check_win(game[x]))
 			{
-				if (x == decision)
-					ai_out[x] = 1;
-				else
-					ai_out[x] = 0;
-			}
-			net.focus_train(game, ai_out, .001);
-			game[decision] = 1;
-			if (check_win(game))
-			{
-
-				net.focus_train(game, ai_out, .001);
+				backprop_game(&net, &net, game);
 				return;
 			}
 		}
-		flip_vec(game);
+		flip_vec(game[x]);
 	}
 }
 
