@@ -150,12 +150,12 @@ void ai_v_ai(network_group& net)
 				else
 					ai_out[x] = 0;
 			}
-			net.focus_train(game, ai_out, .001);
+			net.backprop(game, ai_out, .001);
 			game[decision] = 1;
 			if (check_win(game))
 			{
 
-				net.focus_train(game, ai_out, .001);
+				net.backprop(game, ai_out, .001);
 				return;
 			}
 		}
@@ -213,13 +213,31 @@ void ai_v_network(network_group & net_1,bool goes_first)
 	}
 }
 
+std::vector<float> determine_move(std::vector<float> first, std::vector<float> second)
+{
+	std::vector<float> move;
+	move.resize(9);
+	bool good_move = false;
+	for (int x = 0; x < 9; x++)
+	{
+		move[x] = first[x] + second[x];
+		if (first[x] + second[x] != 0)
+			good_move = true;
+	}
+	if (!good_move)
+	{
+		move[0] == -2;
+	}
+	return move;
+}
+
 void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::vector<float>> game_moves)
 {
 	int offset = 1;
-	int end = game_moves[0][0];
+	int end = game_moves[0][0]; //number of moves in the game stored in the first place of the first game
 	if (game_moves[0][0] == 1)
 	{
-		game_moves[0][0] = 0;
+		game_moves[0][0] = 0; //number reset if the first player to move wins, not if they don't because it doesn't matter
 	}
 	else
 	{
@@ -227,8 +245,12 @@ void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::
 	}
 	for (int x = offset; x <= end; x += 2)
 	{
-		net_1->focus_train(game_moves[x - 1], game_moves[x], .001);
-		net_2->focus_train(game_moves[x - 1], game_moves[x], .001);
+		std::vector<float> move = determine_move(game_moves[x - 1], game_moves[x]);
+		if (move[0] != -2) //if the piece made a move (-2 stored in first space means they didn't)
+		{
+			net_1->focus_train(game_moves[x - 1], move, .1);
+			net_2->focus_train(game_moves[x - 1], move, .1);
+		}
 	}
 }
 
@@ -262,17 +284,24 @@ void network_v_network(network_group & net_1, network_group & net_2)
 			for (int y = 0; y < 9; y++)
 			{
 				//-2 is the symbol for unknown error
-				b_vec[y] = -2;
+				if(game_moves[x][y] != 0)
+					b_vec[y] = -2;
+				else
+					b_vec[y] = 0;
 			}
-			b_vec[decision] = 0;
-
+			net_1.focus_train(game_moves[x - 1], b_vec, .1);
+			net_2.focus_train(game_moves[x - 1], b_vec, .1);
 			if (x % 1 == 0)
-				net_1.focus_train(game_moves[x - 1], b_vec, .001);
+				net_1.fitness--;
 			else
-				net_2.focus_train(game_moves[x - 1], b_vec, .001);
+				net_2.fitness--;
 		}
 		else
 		{
+			if (x % 1 == 0)
+				net_1.fitness++;
+			else
+				net_2.fitness++;
 			game_moves[x][decision] = 1;
 			if (check_win(game_moves[x]))
 			{

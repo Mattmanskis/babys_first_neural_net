@@ -129,7 +129,7 @@ int load_network_vector(std::vector<network_group> &n)
 		not_ended = fileExists(std::to_string(gen_int) + "_" + std::to_string(count) + "_network.txt"); //checks if the file it wants to load exists
 		count++;
 	}
-	n.resize(count*2 - 1); //count = number of files + 1, multiply by 2 and subtact 1 to get double the network size +1
+	n.resize(count-1); //count = number of files + 1, subtact 1 to get the network size
 	for (int x = 0; x < (n.size()-1)/2; x++)
 	{
 		load_network(n[x].network, std::to_string(gen_int) + "_" + std::to_string(x) + "_network.txt");
