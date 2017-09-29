@@ -59,7 +59,7 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 		//computes z by adding all activated values of previous layer
 		for (int output = 0; output < network[network_specs[0] - 2].size(); output++)
 			z += t_network[network_specs[0] - 2][output];
-		//if -2 is passed as expected output, there is no expected output so any output has an error of 0 for that neuron
+		//if -2 is passed as expected output, that means that there is no expected error so any output has an error of 0 for that neuron
 		if (e_output[x] != -2)
 			error_net[network_specs[0] - 1][x] = (t_network[network_specs[0] - 1][x] - e_output[x]) * d_activation(z);
 		else
@@ -107,12 +107,12 @@ void network_group::backprop(std::vector<float> input, std::vector<float> e_outp
 	}
 }
 
-void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_out, float &current_fitness)
+void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_out)
 {
-	current_fitness = 1;
+	fitness = 1;
 	for (int x = 0; x < e_out.size(); x++)
 	{
-		current_fitness -= abs(e_out[x] - n_out[x]);
+		fitness -= abs(e_out[x] - n_out[x]);
 	}
 }
 
@@ -123,16 +123,15 @@ void network_group::focus_train(std::vector<float> input, std::vector<float> out
 	backup.network = network;
 	bool min = false;
 	float current_fitness = 0;
-	float backup_current_fitness = 0;
 	while (!min)
 	{
-		for (int x = 0; x < 3; x++)
+		for (int x = 0; x < 5; x++)
 		{
 			backprop(input, output, training_rate);
 		}
-		get_fitness(this->output(input), output, current_fitness);
-		backup.get_fitness(backup.output(input),output,backup_current_fitness);
-		if (current_fitness > backup_current_fitness)
+		get_fitness(this->output(input), output);
+		backup.get_fitness(backup.output(input),output);
+		if (fitness > backup.fitness)
 			backup.network = network;
 		else
 			min = true;
