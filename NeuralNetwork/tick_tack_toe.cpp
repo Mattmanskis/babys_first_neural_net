@@ -40,6 +40,22 @@ bool check_win(std::vector<float>& game)
 		return true;
 	if (1 == game[2] && game[2] == game[4] && game[4] == game[6])
 		return true;
+	if (-1 == game[0] && game[0] == game[1] && game[1] == game[2])
+		return true;
+	if (-1 == game[3] && game[3] == game[4] && game[4] == game[5])
+		return true;
+	if (-1 == game[6] && game[6] == game[7] && game[7] == game[8])
+		return true;
+	if (-1 == game[0] && game[0] == game[3] && game[3] == game[6])
+		return true;
+	if (-1 == game[1] && game[1] == game[4] && game[4] == game[7])
+		return true;
+	if (-1 == game[2] && game[2] == game[5] && game[5] == game[8])
+		return true;
+	if (-1 == game[0] && game[0] == game[4] && game[4] == game[8])
+		return true;
+	if (-1 == game[2] && game[2] == game[4] && game[4] == game[6])
+		return true;
 	return false;
 }
 
@@ -91,7 +107,7 @@ int ai_decision(std::vector<float> game)
 {
 	int val; 
 	if (search_game(game, -1, 0) == search_game(game, 1, 0)) //if there are no plays on the board
-		return 0;
+		return get_random_8_0();
 	{
 		int piece_count=0;
 		int line_count=0;
@@ -122,44 +138,42 @@ int ai_decision(std::vector<float> game)
 	return search_game(game, 0, 0);
 }
 
+void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::vector<float>> game_moves);
+
 void ai_v_ai(network_group& net)
 {
 	std::vector<float> ai_out;
-	std::vector<float> game;
-	game.resize(9);
+	std::vector<std::vector<float>> game;
+	game.resize(10);
 	ai_out.resize(9);
 	int ai_turns = 0;
-	for (int x = 0; x < 9; x++) //set all squares to empty
+	for (int y = 0; y < 10; y++)
 	{
-		game[x] = 0;
+		game[y].resize(9);
+		for (int x = 0; x < 9; x++) //set all squares to empty
+		{
+			game[y][x] = 0;
+		}
 	}
-	for (int x = 0; x < 9; x++)
+	for (int x = 1; x < 10; x++)
 	{
 		int decision;
-		decision = ai_decision(game);
-		if (game[decision] != 0)
+		decision = ai_decision(game[x-1]);
+		game[x] = game[x - 1];
+		if (game[x][decision] != 0)
 		{
 				std::cout << "ai bad move \n";
 		}
 		else
 		{
-			for (int x = 0; x < 9; x++)
+			game[x][decision] = 1;
+			if (check_win(game[x]))
 			{
-				if (x == decision)
-					ai_out[x] = 1;
-				else
-					ai_out[x] = 0;
-			}
-			net.backprop(game, ai_out, .001);
-			game[decision] = 1;
-			if (check_win(game))
-			{
-
-				net.backprop(game, ai_out, .001);
+				backprop_game(&net, &net, game);
 				return;
 			}
 		}
-		flip_vec(game);
+		flip_vec(game[x]);
 	}
 }
 
@@ -213,31 +227,13 @@ void ai_v_network(network_group & net_1,bool goes_first)
 	}
 }
 
-std::vector<float> determine_move(std::vector<float> first, std::vector<float> second)
-{
-	std::vector<float> move;
-	move.resize(9);
-	bool good_move = false;
-	for (int x = 0; x < 9; x++)
-	{
-		move[x] = first[x] + second[x];
-		if (first[x] + second[x] != 0)
-			good_move = true;
-	}
-	if (!good_move)
-	{
-		move[0] == -2;
-	}
-	return move;
-}
-
 void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::vector<float>> game_moves)
 {
 	int offset = 1;
-	int end = game_moves[0][0]; //number of moves in the game stored in the first place of the first game
+	int end = game_moves[0][0];
 	if (game_moves[0][0] == 1)
 	{
-		game_moves[0][0] = 0; //number reset if the first player to move wins, not if they don't because it doesn't matter
+		game_moves[0][0] = 0;
 	}
 	else
 	{
@@ -245,12 +241,8 @@ void backprop_game(network_group* net_1, network_group* net_2, std::vector<std::
 	}
 	for (int x = offset; x <= end; x += 2)
 	{
-		std::vector<float> move = determine_move(game_moves[x - 1], game_moves[x]);
-		if (move[0] != -2) //if the piece made a move (-2 stored in first space means they didn't)
-		{
-			net_1->focus_train(game_moves[x - 1], move, .1);
-			net_2->focus_train(game_moves[x - 1], move, .1);
-		}
+		net_1->focus_train(game_moves[x - 1], game_moves[x], .001);
+		net_2->focus_train(game_moves[x - 1], game_moves[x], .001);
 	}
 }
 
@@ -284,24 +276,17 @@ void network_v_network(network_group & net_1, network_group & net_2)
 			for (int y = 0; y < 9; y++)
 			{
 				//-2 is the symbol for unknown error
-				if(game_moves[x][y] != 0)
-					b_vec[y] = -2;
-				else
-					b_vec[y] = 0;
+				b_vec[y] = -2;
 			}
-			net_1.focus_train(game_moves[x - 1], b_vec, .1);
-			net_2.focus_train(game_moves[x - 1], b_vec, .1);
+			b_vec[decision] = 0;
+
 			if (x % 1 == 0)
-				net_1.fitness--;
+				net_1.focus_train(game_moves[x - 1], b_vec, .001);
 			else
-				net_2.fitness--;
+				net_2.focus_train(game_moves[x - 1], b_vec, .001);
 		}
 		else
 		{
-			if (x % 1 == 0)
-				net_1.fitness++;
-			else
-				net_2.fitness++;
 			game_moves[x][decision] = 1;
 			if (check_win(game_moves[x]))
 			{
@@ -372,5 +357,49 @@ void human_v_network(network_group & net)
 			std::cout << "Error: Bad Move" << std::endl;
 		}
 		flip_vec(game);
+	}
+}
+
+int check_best_state(game_state* state)
+{
+	float max = 0; 
+	int index = 0;
+	bool odd = !state->odd; //if the state you're playing against is odd you would be even
+	for (int x = 0; x < 9; x++)
+	{
+		if (state->next[x].rating != -2)
+		{
+			if (odd)
+			{
+				if (state->next[x].rating > max)
+				{
+					max = state->next[x].rating;
+					index = x;
+				}
+			}
+			else
+			{
+				if (state->next[x].rating < max)
+				{
+					max = state->next[x].rating;
+					index = x;
+				}
+			}
+		}
+	}
+	return index;
+}
+
+void train_with_state(network_group &net, game_state* start)
+{
+	std::vector<float> output = { 0,0,0,0,0,0,0,0,0 };
+	output[check_best_state(start)] = 1;
+	net.focus_train(start->game, output,.01);
+	for (int x = 0; x < 9; x++)
+	{
+		if (start->next[x].rating != -2 && start->next[x].next.size() != 0)
+		{
+			train_with_state(net, &start->next[x]);
+		}
 	}
 }
