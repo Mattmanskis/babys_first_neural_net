@@ -15,8 +15,6 @@
 int main()
 {
 	//test();
-	game_state state;
-	state.fill(0);
 	std::string option;
 	bool valid = false;
 	while (!valid)
@@ -35,10 +33,6 @@ int main()
 		int start_time_o = 0;
 		float mutation_chance;
 		std::vector<network_group> network_v; //creates a vector of network groups
-		for (int x = 0; x < network_v.size(); x++)
-		{
-			network_v[x].fill_network(network_v[x].network);
-		}
 		int gen_count = 0;
 
 		std::cout << "enter how often you would like to save networks, in seconds \n";
@@ -129,16 +123,14 @@ int main()
 			}
 			else
 			{
-				for (int x = 0; x < network_v.size(); x++) 
+				for (int x = 0; x < network_v.size(); x++)
 				{
-					train_with_state(network_v[x],&state);
 					for (int y = 0; y < network_v.size(); y++)
 					{
 						network_v_network(network_v[x], network_v[y]);
 						network_v_network(network_v[y], network_v[x]);
 					}
 				}
-
 				for (int x = 0; x < network_v.size(); x++)
 				{
 					// divide fitness by number of networks *2 to get avarage fitness 
