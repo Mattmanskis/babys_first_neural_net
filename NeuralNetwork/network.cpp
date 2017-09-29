@@ -116,7 +116,7 @@ void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_o
 	}
 }
 
-void network_group::focus_train(std::vector<float> input, std::vector<float> output, float training_rate)
+int network_group::focus_train(std::vector<float> input, std::vector<float> output, float training_rate)
 {
 	int count = 0;
 	network_group backup;
@@ -137,6 +137,19 @@ void network_group::focus_train(std::vector<float> input, std::vector<float> out
 		else
 			min = true;
 		count++;
+	}
+	return count;
+}
+
+void network_group::dynamic_focus_train(std::vector<float> input, std::vector<float> output)
+{
+	for (int x = training_weights.size() - 1; x >= 0; x--)
+	{
+		int count = focus_train(input, output, training_weights[x]);
+		if (count > 5)
+			training_weights.push_back(training_weights[x] * 2);
+		if (count < 2)
+			training_weights[x] *= (2 / 3);
 	}
 }
 
