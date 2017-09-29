@@ -40,6 +40,22 @@ bool check_win(std::vector<float>& game)
 		return true;
 	if (1 == game[2] && game[2] == game[4] && game[4] == game[6])
 		return true;
+	if (-1 == game[0] && game[0] == game[1] && game[1] == game[2])
+		return true;
+	if (-1 == game[3] && game[3] == game[4] && game[4] == game[5])
+		return true;
+	if (-1 == game[6] && game[6] == game[7] && game[7] == game[8])
+		return true;
+	if (-1 == game[0] && game[0] == game[3] && game[3] == game[6])
+		return true;
+	if (-1 == game[1] && game[1] == game[4] && game[4] == game[7])
+		return true;
+	if (-1 == game[2] && game[2] == game[5] && game[5] == game[8])
+		return true;
+	if (-1 == game[0] && game[0] == game[4] && game[4] == game[8])
+		return true;
+	if (-1 == game[2] && game[2] == game[4] && game[4] == game[6])
+		return true;
 	return false;
 }
 
@@ -341,5 +357,49 @@ void human_v_network(network_group & net)
 			std::cout << "Error: Bad Move" << std::endl;
 		}
 		flip_vec(game);
+	}
+}
+
+int check_best_state(game_state* state)
+{
+	float max = 0; 
+	int index = 0;
+	bool odd = !state->odd; //if the state you're playing against is odd you would be even
+	for (int x = 0; x < 9; x++)
+	{
+		if (state->next[x].rating != -2)
+		{
+			if (odd)
+			{
+				if (state->next[x].rating > max)
+				{
+					max = state->next[x].rating;
+					index = x;
+				}
+			}
+			else
+			{
+				if (state->next[x].rating < max)
+				{
+					max = state->next[x].rating;
+					index = x;
+				}
+			}
+		}
+	}
+	return index;
+}
+
+void train_with_state(network_group &net, game_state* start)
+{
+	std::vector<float> output = { 0,0,0,0,0,0,0,0,0 };
+	output[check_best_state(start)] = 1;
+	net.focus_train(start->game, output,.1);
+	for (int x = 0; x < 9; x++)
+	{
+		if (start->next[x].rating != -2 && start->next[x].next.size() != 0)
+		{
+			train_with_state(net, &start->next[x]);
+		}
 	}
 }

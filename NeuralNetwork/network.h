@@ -6,6 +6,8 @@
 
 struct network_group
 {
+	std::vector<float> training_weights = {.01f};
+
 	Network network;
 
 	T_Network t_network;
@@ -18,7 +20,7 @@ struct network_group
 	network_group()
 	{
 		set_network_size(network,network_specs);
-		fill_network(network);
+		//fill_network(network);
 		//fill_determin(network);
 		set_t_network_size(t_network,network_specs);
 		set_error_network_size(error_net, network_specs);
@@ -30,7 +32,9 @@ struct network_group
 
 	void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_out);
 
-	void focus_train(std::vector<float> input, std::vector<float> output, float training_rate);
+	int focus_train(std::vector<float> input, std::vector<float> output, float training_rate);
+
+	void dynamic_focus_train(std::vector<float> input, std::vector<float> output);
 	//vector should have number of layers as first number (including input and output layers) and number of neurons per layer for all numbers after that
 	void set_network_size(Network & network, std::vector<int> specs);
 
