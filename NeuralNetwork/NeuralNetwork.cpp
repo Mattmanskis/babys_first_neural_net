@@ -136,6 +136,11 @@ int main()
 					{
 						network_v_network(network_v[x], network_v[y]);
 						network_v_network(network_v[y], network_v[x]);
+						
+					}
+					for (int y = 0; y < network_v[x].training_weights.size(); y++)
+					{
+						std::cout << network_v[x].training_weights[y] <<std::endl;
 					}
 				}
 

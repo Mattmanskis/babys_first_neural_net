@@ -394,7 +394,7 @@ void train_with_state(network_group &net, game_state* start)
 {
 	std::vector<float> output = { 0,0,0,0,0,0,0,0,0 };
 	output[check_best_state(start)] = 1;
-	net.focus_train(start->game, output,.01);
+	net.dynamic_focus_train(start->game, output);
 	for (int x = 0; x < 9; x++)
 	{
 		if (start->next[x].rating != -2 && start->next[x].next.size() != 0)

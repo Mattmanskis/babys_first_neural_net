@@ -6,7 +6,7 @@
 
 struct network_group
 {
-	std::vector<float> training_weights = {.01f};
+	std::vector<float> training_weights;
 
 	Network network;
 
@@ -20,6 +20,8 @@ struct network_group
 	network_group()
 	{
 		set_network_size(network,network_specs);
+		training_weights.resize(1);
+		training_weights[0] = .01;
 		//fill_network(network);
 		//fill_determin(network);
 		set_t_network_size(t_network,network_specs);
