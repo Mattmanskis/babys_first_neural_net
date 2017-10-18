@@ -114,7 +114,6 @@ void network_group::get_fitness(std::vector<float> n_out, std::vector<float> e_o
 	{
 		fitness -= abs(e_out[x] - n_out[x]);
 	}
-	_ASSERT(fitness == 1);
 }
 
 int network_group::focus_train(std::vector<float> input, std::vector<float> output, float training_rate)
@@ -143,7 +142,7 @@ void network_group::dynamic_focus_train(std::vector<float> input, std::vector<fl
 	for (int x = training_weights.size() - 1; x >= 0; x--)
 	{
 		int count = focus_train(input, output, training_weights[x]);
-		if (count > 5)
+		if (count > 4)
 			training_weights.push_back(training_weights[x] * 2);
 		if (count < 2)
 			training_weights[x] *= (2 / 3);

@@ -35,10 +35,6 @@ int main()
 		int start_time_o = 0;
 		float mutation_chance;
 		std::vector<network_group> network_v; //creates a vector of network groups
-		for (int x = 0; x < network_v.size(); x++)
-		{
-			network_v[x].fill_network(network_v[x].network);
-		}
 		int gen_count = 0;
 
 		std::cout << "enter how often you would like to save networks, in seconds \n";
@@ -103,6 +99,10 @@ int main()
 		else
 		{
 			network_v.resize(2);
+			for (int x = 0; x < network_v.size(); x++)
+			{
+				network_v[x].fill_network(network_v[x].network);
+			}
 		}
 
 

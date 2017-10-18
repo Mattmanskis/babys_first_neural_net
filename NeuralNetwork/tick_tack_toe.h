@@ -77,7 +77,7 @@ struct game_state
 					full = false;
 				else if (count == 8)
 				{
-					add_tie();
+					add_tie(0);
 					return;
 				}
 				count++;
@@ -94,31 +94,31 @@ struct game_state
 		}
 		else // if you are a winning state make no more states and hand back the win to chain of previous
 		{
-			add_win(odd);
+			add_win(odd,0);
 		}
 	}
 
-	void add_tie()
+	void add_tie(int depth)
 	{
-		tie++;
+		tie += pow(.1,depth);
 		if (!starting)
-			previous->add_tie();
+			previous->add_tie(depth +1);
 		calc_rating();
 	}
 
-	void add_win(bool is_odd)
+	void add_win(bool is_odd, int depth)
 	{
 		if (is_odd)
 		{
-			odd_win++;
+			odd_win += pow(.1,depth);
 			if(!starting)
-				previous->add_win(is_odd);
+				previous->add_win(is_odd,depth+1);
 		}
 		else
 		{
-			even_win++;
+			even_win += pow(.1, depth);
 			if(!starting)
-				previous->add_win(is_odd);
+				previous->add_win(is_odd,depth+1);
 		}
 		calc_rating();
 	}
