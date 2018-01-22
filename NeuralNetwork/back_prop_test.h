@@ -131,7 +131,7 @@ void print_diff(std::vector<float> first, std::vector<float> second)
 	{
 		total += abs(first[x] - second[x]);
 	}
-	std::cout << total / first.size() <<std::endl;
+	std::cout << "diff is "<< total / first.size() <<std::endl;
 }
 
 std::vector<float> sum_net(Network& net);

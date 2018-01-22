@@ -390,6 +390,68 @@ int check_best_state(game_state* state)
 	return index;
 }
 
+void play_state(game_state * start)
+{
+	std::string choice;
+	std::cout << "For this game each turn you will enter a number 0-8 which will represent your move, \n";
+	std::cout << "0 represents upper left, 4 the middle square, and 8 lower right etc.\n";
+	std::cout << "Would you like to go first y\n? \n";
+	while (choice != "y" && choice != "n")
+		std::getline(std::cin, choice);
+	int offset = 0;
+	bool state_is_odd = false;
+	if (choice == "n")
+	{
+		offset = 1;
+		state_is_odd = true;
+	}
+	std::vector<float> game;
+	game.resize(9);
+	for (int x = 0; x < 9; x++) //set all squares to empty
+	{
+		game[x] = 0;
+	}
+	for (int x = 0; x < 9; x++)
+	{
+		print_game(game);
+		int decision;
+		game_state *last;
+		if ((x + offset) % 2 == 0) //if even player goes
+		{
+			std::getline(std::cin, choice);
+			decision = stoi(choice);
+			last = &last->next[decision];
+		}
+		else //else state tree goes
+		{
+			if (state_is_odd)
+			{
+				for
+			}
+		}
+		if (game[decision] == 0)
+		{
+			game[decision] = 1;
+			if (check_win(game))
+			{
+				if ((x + offset) % 2 == 0)
+				{
+					std::cout << "You win! \n";
+				}
+				else
+				{
+					std::cout << "Get Rekt! \n";
+				}
+				return;
+			}
+		}
+		else {
+			std::cout << "Error: Bad Move" << std::endl;
+		}
+		flip_vec(game);
+	}
+}
+
 void train_with_state(network_group &net, game_state* start)
 {
 	std::vector<float> output = { 0,0,0,0,0,0,0,0,0 };

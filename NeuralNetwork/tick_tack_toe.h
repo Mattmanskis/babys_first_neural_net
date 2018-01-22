@@ -3,6 +3,7 @@
 #include "network.h"
 #include <iostream>
 
+
 //game vec flipped between each turn for consistancy, and faster learning, 1 is always you -1 is always them 
 void flip_vec(std::vector<float> &game_vec);
 
@@ -129,5 +130,6 @@ struct game_state
 	}
 };
 
+void play_state(game_state* start);
 
 void train_with_state(network_group &net, game_state* start);
